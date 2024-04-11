@@ -27,6 +27,37 @@ class Provider {
 }
 
 class ProviderService {
+  Future<List<Provider>> getProvidersByIdAndType(int id, bool isMovie) async {
+    
+    final Map<String, String> headers = {
+      'accept': 'application/json',
+      'Authorization':
+          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmZmYTBkMTZmYjhkYzI4NzM1MzExNTZhNWM1ZjQxYSIsInN1YiI6IjYzODYzNzE0MDM5OGFiMDBjODM5MTJkOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qQjwnSQLDfVNAuinpsM-ATK400-dnwuWUVirc7_AiQY',
+    };
+    dynamic response;
+
+    if (isMovie) {
+    response = await http.get(
+        Uri.parse(ApiEndPoint(id: id).getMovieProvidersByMovieID),
+        headers: headers);
+    } else {
+    print("Add support for tv shows in provider api for detailed");
+    }
+
+    if (response.statusCode == 200) {
+      List<Provider> providerList;
+      final data = jsonDecode(response.body);
+      print(data);
+
+      return data;
+    }
+
+    print(response);
+    return response;
+
+  }
+
+
   Future<List<Provider>> getProviders(String countryCode) async {
     // final response =
     //     await http.get(Uri.parse('https://randomuser.me/api?results=20'));

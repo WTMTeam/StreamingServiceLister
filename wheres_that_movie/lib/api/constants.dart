@@ -11,11 +11,13 @@ class ApiEndPoint {
   late String getMovieStreamingProviderInfoRegion;
   late String getCountries;
   late String getMovieProvidersByMovieID;
+  late String searchMovieShowPerson;
 
   // * Genre Docs: https://developer.themoviedb.org/reference/genre-movie-list
 
   ApiEndPoint(
-      {int? id,
+      {String? searchText,
+    int? id,
       String? providerIDs,
       String? genreIDs,
       int? runtime,
@@ -35,6 +37,7 @@ class ApiEndPoint {
 // string
 // possible values are: [flatrate, free, ads, rent, buy] use in conjunction with watch_region, can be a comma (AND) or pipe (OR) separated query
 
+    searchMovieShowPerson = '$baseUrlPath/search/multi?query=$searchText&include_adult=false';
 
     getMovieSuggestions =
         '$baseUrlPath/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&watch_region=$region&with_genres=$genreIDs&with_watch_providers=$providerIDs&with_watch_monetization_types=flatrate|free|ads';

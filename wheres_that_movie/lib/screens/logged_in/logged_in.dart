@@ -19,12 +19,18 @@
 //                      Added clear as an optional parameter to mySearch, with default value
 //                      of false. Added navigation to the suggestions screen.
 
-import 'dart:math';
-import 'package:expandable_page_view/expandable_page_view.dart';
+import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wheres_that_movie/api/constants.dart';
+import 'package:wheres_that_movie/api/models/movie_model.dart';
+import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/screens/credits/credits.dart';
+import 'package:wheres_that_movie/screens/detailed_page/new_detailed.dart';
 import 'package:wheres_that_movie/screens/my_list/my_list.dart';
 import 'package:wheres_that_movie/screens/suggestions/suggestions.dart';
 import 'package:wheres_that_movie/screens/trending_page/trending.dart';
@@ -95,7 +101,28 @@ class _MyLoggedInState extends State<MyLoggedIn> {
 
       String query = myController.text;
 
-      Map result = await tmdbWithCustomLogs.v3.search.queryMulti(query);
+      //Map result = await tmdbWithCustomLogs.v3.search.queryMulti(query);
+
+      // todo:
+      //  * Implement a new search function using the http package
+      final Map<String, String> headers = {
+        'accept': 'application/json',
+        'Authorization':
+            'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmZmYTBkMTZmYjhkYzI4NzM1MzExNTZhNWM1ZjQxYSIsInN1YiI6IjYzODYzNzE0MDM5OGFiMDBjODM5MTJkOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qQjwnSQLDfVNAuinpsM-ATK400-dnwuWUVirc7_AiQY',
+      };
+      var response = await http.get(
+          Uri.parse(ApiEndPoint(searchText: query).searchMovieShowPerson),
+          headers: headers);
+
+      if (response.statusCode != 200) {
+        // set an error state
+        // early return
+        print("Error getting search results");
+      }
+
+      final data = jsonDecode(response.body);
+      print(data);
+      Map result = data;
 
       setState(() {
         previousSearch = myController.text;
@@ -104,33 +131,21 @@ class _MyLoggedInState extends State<MyLoggedIn> {
 
       for (int i = 0; i < searchResults.length; i++) {
         if (searchResults[i]['media_type'] == "movie") {
-          var thisMovie = {
-            'id': searchResults[i]['id'],
-            'title': searchResults[i]['title'],
-            'overview': searchResults[i]['overview'],
-            'rating': searchResults[i]['vote_average'],
-            'poster_path': searchResults[i]['poster_path'],
-            'isMovie': true,
-          };
-
-          showsAndMovies.add(thisMovie);
+          Movie currentMovie = Movie.fromJson(searchResults[i]);
+          showsAndMovies.add(currentMovie);
         } else if (searchResults[i]['media_type'] == "tv") {
-          var thisShow = {
-            'id': searchResults[i]['id'],
-            'title': searchResults[i]['name'],
-            'overview': searchResults[i]['overview'],
-            'rating': searchResults[i]['vote_average'],
-            'poster_path': searchResults[i]['poster_path'],
-            'isMovie': false,
-          };
-
-          showsAndMovies.add(thisShow);
+          Show currentShow = Show.fromJson(searchResults[i]);
+          showsAndMovies.add(currentShow);
         } else if (searchResults[i]['media_type'] == "person") {
           people.add(searchResults[i]['name']);
         }
       }
 
-      makeCardList();
+      setState(() {
+        cards = showsAndMovies;
+        loadingSearchResults = false;
+      });
+      //makeCardList();
     }
   }
 
@@ -162,7 +177,19 @@ class _MyLoggedInState extends State<MyLoggedIn> {
         }
       } catch (e) {
         // print error message
+        print(e);
       }
+    }
+  }
+
+  double getViewportFraction(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // Adjust these threshold values based on your preference
+    if (screenWidth > 400) {
+      return 0.8;
+    } else {
+      return 0.9;
     }
   }
 
@@ -320,66 +347,64 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                     )
                   : cards.isEmpty
                       ? const SizedBox()
-                      : Container(
-                          margin:
-                              const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                          child: ExpandablePageView.builder(
-                              controller: carouselController,
-                              // allows our shadow to be displayed outside of widget bounds
-                              clipBehavior: Clip.none,
-                              itemCount: cards.length,
-                              itemBuilder: (_, index) {
-                                if (!carouselController
-                                    .position.haveDimensions) {
-                                  // Wait for the layout to stabilize before attempting to animate the PageController
-                                  WidgetsBinding.instance
-                                      .addPostFrameCallback((_) {
-                                    if (carouselController
-                                        .position.haveDimensions) {
-                                      // If the position has dimensions now, rebuild the widget tree to trigger the animation
-                                      setState(() {});
-                                    }
-                                  });
-                                  // return const SizedBox();
-                                  return const Center(
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 150),
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  );
-                                } else {
-                                  double maxWidth = 0.0;
-                                  return LayoutBuilder(
-                                    builder: (BuildContext context,
-                                        BoxConstraints constraints) {
-                                      // Set the maximum height of all cards to the height of the highest card
-                                      if (maxWidth < constraints.maxWidth) {
-                                        maxWidth = constraints.maxWidth;
-                                      }
-                                      return SizedBox(
-                                        child: AnimatedBuilder(
-                                          animation: carouselController,
-                                          builder: (context, child) {
-                                            return Transform.scale(
-                                              scale: max(
-                                                0.85,
-                                                (1 -
-                                                    (carouselController.page! -
-                                                                index)
-                                                            .abs() /
-                                                        2),
-                                              ),
-                                              child: cards[index],
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    },
-                                  );
+                      : Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0), child:
+              CarouselSlider.builder(
+                          options: CarouselOptions(
+                              height: 450.0,
+                              aspectRatio: 1.5,
+                              viewportFraction: getViewportFraction(context)),
+                          itemCount: showsAndMovies.length,
+                          itemBuilder: (context, index, realIndex) {
+                            Movie? movie;
+                            Show? show;
+                            String isMovie = "";
+                            String posterUrl = "";
+                            if (showsAndMovies[index] is Movie) {
+                              isMovie = "true";
+                              movie = showsAndMovies[index];
+                              posterUrl =
+                                  "https://image.tmdb.org/t/p/w300${movie!.posterPath}";
+                            } else if (showsAndMovies[index] is Show) {
+                              isMovie = "false";
+                              show = showsAndMovies[index];
+                              posterUrl =
+                                  "https://image.tmdb.org/t/p/w300${show!.posterPath}";
+                            } else {
+                              print("whuuuut");
+                            }
+                            return InkWell(
+                              onTap: () {
+                                if (isMovie == "true") {
+                                  Get.to(() => NewDetailed(movie: movie),
+                                      transition: Transition.zoom);
+                                } else if (isMovie == "false") {
+                                  Get.to(() => NewDetailed(show: show),
+                                      transition: Transition.zoom);
                                 }
-                              }),
+                              },
+                              child: Container(
+                                height: 450,
+                                width: 300,
+                                clipBehavior: Clip.antiAlias,
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8.0)),
+                                  shape: BoxShape.rectangle,
+                                ),
+                                child: CachedNetworkImage(
+                                  imageUrl: posterUrl,
+                                  width: 500,
+                                  errorWidget: (context, posterUrl, error) =>
+                                      const Icon(
+                                    Icons.no_photography_outlined,
+                                    size: 50,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
+ ),
               Container(
                 margin: const EdgeInsets.only(bottom: 10.0),
                 child: ElevatedButton(
