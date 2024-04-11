@@ -18,6 +18,8 @@
 //    (07/24/2023)(SR): Added CircularProgressIndicator for loading search results.
 //                      Added clear as an optional parameter to mySearch, with default value
 //                      of false. Added navigation to the suggestions screen.
+//    (04/10/2024)(SR): Reimplemented the search function with the http package.
+//                      Redesigned the search carousel to match the suggestions carousel.
 
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -90,21 +92,8 @@ class _MyLoggedInState extends State<MyLoggedIn> {
     //   // Do nothing
     // }
     else {
-      final tmdbWithCustomLogs = TMDB(
-        //TMDB instance
-        ApiKeys(apiKey, readAccessToken), //ApiKeys instance with your keys,
-        logConfig: const ConfigLogger(
-          showLogs: true, //must be true than only all other logs will be shown
-          showErrorLogs: true,
-        ),
-      );
-
       String query = myController.text;
 
-      //Map result = await tmdbWithCustomLogs.v3.search.queryMulti(query);
-
-      // todo:
-      //  * Implement a new search function using the http package
       final Map<String, String> headers = {
         'accept': 'application/json',
         'Authorization':
@@ -145,40 +134,6 @@ class _MyLoggedInState extends State<MyLoggedIn> {
         cards = showsAndMovies;
         loadingSearchResults = false;
       });
-      //makeCardList();
-    }
-  }
-
-  // Function to make the card list
-  makeCardList() {
-    // reset the cards list
-    List newCards = [];
-
-    for (int i = 0; i < showsAndMovies.length; i++) {
-      try {
-        String imgUrl =
-            "https://image.tmdb.org/t/p/w200${showsAndMovies[i]['poster_path']}";
-
-        if (showsAndMovies[i]['poster_path'] == null) {
-          imgUrl = "";
-        } else {
-          newCards.add(SearchCarouselCard(
-            id: showsAndMovies[i]['id'],
-            imgUrl: imgUrl,
-            title: showsAndMovies[i]['title'],
-            overview: showsAndMovies[i]['overview'],
-            rating: showsAndMovies[i]['rating'],
-            isMovie: showsAndMovies[i]['isMovie'],
-          ));
-          setState(() {
-            cards = newCards;
-            loadingSearchResults = false;
-          });
-        }
-      } catch (e) {
-        // print error message
-        print(e);
-      }
     }
   }
 
@@ -347,64 +302,66 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                     )
                   : cards.isEmpty
                       ? const SizedBox()
-                      : Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0), child:
-              CarouselSlider.builder(
-                          options: CarouselOptions(
-                              height: 450.0,
-                              aspectRatio: 1.5,
-                              viewportFraction: getViewportFraction(context)),
-                          itemCount: showsAndMovies.length,
-                          itemBuilder: (context, index, realIndex) {
-                            Movie? movie;
-                            Show? show;
-                            String isMovie = "";
-                            String posterUrl = "";
-                            if (showsAndMovies[index] is Movie) {
-                              isMovie = "true";
-                              movie = showsAndMovies[index];
-                              posterUrl =
-                                  "https://image.tmdb.org/t/p/w300${movie!.posterPath}";
-                            } else if (showsAndMovies[index] is Show) {
-                              isMovie = "false";
-                              show = showsAndMovies[index];
-                              posterUrl =
-                                  "https://image.tmdb.org/t/p/w300${show!.posterPath}";
-                            } else {
-                              print("whuuuut");
-                            }
-                            return InkWell(
-                              onTap: () {
-                                if (isMovie == "true") {
-                                  Get.to(() => NewDetailed(movie: movie),
-                                      transition: Transition.zoom);
-                                } else if (isMovie == "false") {
-                                  Get.to(() => NewDetailed(show: show),
-                                      transition: Transition.zoom);
-                                }
-                              },
-                              child: Container(
-                                height: 450,
-                                width: 300,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: const BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8.0)),
-                                  shape: BoxShape.rectangle,
-                                ),
-                                child: CachedNetworkImage(
-                                  imageUrl: posterUrl,
-                                  width: 500,
-                                  errorWidget: (context, posterUrl, error) =>
-                                      const Icon(
-                                    Icons.no_photography_outlined,
-                                    size: 50,
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 8.0),
+                          child: CarouselSlider.builder(
+                            options: CarouselOptions(
+                                height: 450.0,
+                                aspectRatio: 1.5,
+                                viewportFraction: getViewportFraction(context)),
+                            itemCount: showsAndMovies.length,
+                            itemBuilder: (context, index, realIndex) {
+                              Movie? movie;
+                              Show? show;
+                              String isMovie = "";
+                              String posterUrl = "";
+                              if (showsAndMovies[index] is Movie) {
+                                isMovie = "true";
+                                movie = showsAndMovies[index];
+                                posterUrl =
+                                    "https://image.tmdb.org/t/p/w300${movie!.posterPath}";
+                              } else if (showsAndMovies[index] is Show) {
+                                isMovie = "false";
+                                show = showsAndMovies[index];
+                                posterUrl =
+                                    "https://image.tmdb.org/t/p/w300${show!.posterPath}";
+                              } else {
+                                print("whuuuut");
+                              }
+                              return InkWell(
+                                onTap: () {
+                                  if (isMovie == "true") {
+                                    Get.to(() => NewDetailed(movie: movie),
+                                        transition: Transition.zoom);
+                                  } else if (isMovie == "false") {
+                                    Get.to(() => NewDetailed(show: show),
+                                        transition: Transition.zoom);
+                                  }
+                                },
+                                child: Container(
+                                  height: 450,
+                                  width: 300,
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: const BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    shape: BoxShape.rectangle,
+                                  ),
+                                  child: CachedNetworkImage(
+                                    imageUrl: posterUrl,
+                                    width: 500,
+                                    errorWidget: (context, posterUrl, error) =>
+                                        const Icon(
+                                      Icons.no_photography_outlined,
+                                      size: 50,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
- ),
               Container(
                 margin: const EdgeInsets.only(bottom: 10.0),
                 child: ElevatedButton(
