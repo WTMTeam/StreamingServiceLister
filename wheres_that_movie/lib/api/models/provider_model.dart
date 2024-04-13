@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -27,8 +28,8 @@ class Provider {
 }
 
 class ProviderService {
-  Future<List<Provider>> getProvidersByIdAndType(int id, bool isMovie) async {
-    
+  Future<Map<String, List<Provider>>> getProvidersByIdAndType(
+      int id, bool isMovie, String countryCode) async {
     final Map<String, String> headers = {
       'accept': 'application/json',
       'Authorization':
@@ -37,26 +38,86 @@ class ProviderService {
     dynamic response;
 
     if (isMovie) {
-    response = await http.get(
-        Uri.parse(ApiEndPoint(id: id).getMovieProvidersByMovieID),
-        headers: headers);
+      print("It's a movie");
+      Uri uri = Uri.parse(ApiEndPoint(id: id).getMovieProvidersByMovieID);
+      print("Uri: $uri");
+      response = await http.get(
+          Uri.parse(ApiEndPoint(id: id).getMovieProvidersByMovieID),
+          headers: headers);
+    } else if (!isMovie) {
+      print("It's a show");
+      response = await http.get(
+          Uri.parse(ApiEndPoint(id: id).getShowProvidersByShowID),
+          headers: headers);
     } else {
-    print("Add support for tv shows in provider api for detailed");
+      print("Something went wrong in getProvidersByIdAndType");
     }
 
     if (response.statusCode == 200) {
-      List<Provider> providerList;
       final data = jsonDecode(response.body);
-      print(data);
 
-      return data;
+      final Map<String, List<Provider>> providerLists = {
+        'streamingProviders': [],
+        'rentProviders': [],
+        'buyProviders': [],
+      };
+
+      final List<Provider> streamingList = [];
+      final List<Provider> rentList = [];
+      final List<Provider> buyList = [];
+
+      final rentProviders = data['results'][countryCode]['rent'] ?? [];
+      final buyProviders = data['results'][countryCode]['buy'] ?? [];
+      final streamingProviders = data['results'][countryCode]['flatrate'] ?? [];
+
+      for (int i = 0; i < streamingProviders.length; i++) {
+        final entry = streamingProviders[i];
+        try {
+          streamingList.add(Provider.fromJson(entry));
+        } catch (e) {
+          print("Error adding to provider list");
+          print("Exception: $e");
+        }
+      }
+
+      for (int i = 0; i < rentProviders.length; i++) {
+        final entry = rentProviders[i];
+        try {
+          rentList.add(Provider.fromJson(entry));
+        } catch (e) {
+          print("Error adding to provider list");
+          print("Exception: $e");
+        }
+      }
+
+      for (int i = 0; i < buyProviders.length; i++) {
+        final entry = buyProviders[i];
+        try {
+          buyList.add(Provider.fromJson(entry));
+        } catch (e) {
+          print("Error adding to provider list");
+          print("Exception: $e");
+        }
+      }
+
+      // Sort the providerList based on displayPriority
+      // streamingProviders
+      //     .sort((a, b) => a.displayPriority.compareTo(b.displayPriority));
+
+      providerLists['streamingProviders'] = streamingList;
+      providerLists['rentProviders'] = rentList;
+      providerLists['buyProviders'] = buyList;
+
+      print(providerLists['streamingProviders']);
+      print(providerLists['rentProviders']);
+      print(providerLists['buyProviders']);
+
+      return providerLists;
+    } else {
+      print("Exception in getProvidersByIdAndType");
+      throw Exception('HTTP FAILED with status code: ${response.statusCode}');
     }
-
-    print(response);
-    return response;
-
   }
-
 
   Future<List<Provider>> getProviders(String countryCode) async {
     // final response =

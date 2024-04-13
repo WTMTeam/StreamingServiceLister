@@ -11,6 +11,7 @@ class ApiEndPoint {
   late String getMovieStreamingProviderInfoRegion;
   late String getCountries;
   late String getMovieProvidersByMovieID;
+  late String getShowProvidersByShowID;
   late String searchMovieShowPerson;
 
   // * Genre Docs: https://developer.themoviedb.org/reference/genre-movie-list
@@ -55,6 +56,7 @@ class ApiEndPoint {
     getTvShowGenresUrl = '$baseUrlPath/genre/tv/list?language=en';
 
     getMovieProvidersByMovieID = '$baseUrlPath/movie/$id/watch/providers';
+    getShowProvidersByShowID = '$baseUrlPath/show/$id/watch/providers';
     // Get the streaming provider information for movies
     getMovieStreamingProviderInfo =
         '$baseUrlPath/watch/providers/movie?language=en-US';
