@@ -241,16 +241,18 @@ class _NewDetailedState extends State<NewDetailed> {
 
       double width = MediaQuery.of(context).size.width;
       double height = MediaQuery.of(context).size.height;
+      int widthInt = width.toInt();
 
       if (widget.movie != null) {
         title = widget.movie!.title;
-        print(width);
-        int widthInt = width.toInt();
-        print(widthInt);
         backdropUrl =
             "https://image.tmdb.org/t/p/w300${widget.movie!.backdropPath}";
 
         //backdropUrl = "https://image.tmdb.org/t/p/w45${widget.movie!.backdropPath}";
+      } else if (widget.show != null) {
+        title = widget.show!.title;
+        backdropUrl =
+            "https://image.tmdb.org/t/p/w300${widget.show!.backdropPath}";
       }
 
       return Scaffold(
@@ -280,23 +282,74 @@ class _NewDetailedState extends State<NewDetailed> {
           backgroundColor: Theme.of(context).canvasColor,
           elevation: 10.0,
         ),
-        body: Stack(
+        body: Column(
           children: [
-            CachedNetworkImage(
-              imageUrl: backdropUrl,
-              fit: BoxFit.fitWidth,
-              width: width,
-              height: height,
-              // You can add placeholder and error widgets if needed
-              placeholder: (context, url) =>
-                  const CircularProgressIndicator(),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-            ),
-            Column(
+            Stack(
               children: [
-                const Text("Test"),
+                CachedNetworkImage(
+                  imageUrl: backdropUrl,
+                  fit: BoxFit.fitWidth,
+                  width: width,
+                  //height: height,
+                  // You can add placeholder and error widgets if needed
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
+                Column(
+                  children: [
+                    const Text("Test"),
+                  ],
+                ),
               ],
             ),
+            Container(
+              margin:
+                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 5.0),
+              height: 92.0,
+              child: ListView.builder(
+                itemCount: currentProviders.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: ((context, index) {
+                  Provider provider = currentProviders[index];
+                  String providerImageUrl =
+                      "https://image.tmdb.org/t/p/w92${provider.logoPath}";
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
+                    child: InkWell(
+                      onTap: () {
+                        //call to open provider app?
+                      },
+                      child: Container(
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(12.0),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  Colors.black.withOpacity(0.5), // Shadow color
+                              spreadRadius: 2, // Spread radius
+                              blurRadius: 5, // Blur radius
+                              offset: const Offset(
+                                  1, 2), // Offset from the top left corner
+                            ),
+                          ],
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: providerImageUrl,
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                              fit: BoxFit.fill,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            )
           ],
         ),
       );

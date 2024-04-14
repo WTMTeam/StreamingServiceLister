@@ -56,7 +56,7 @@ class ApiEndPoint {
     getTvShowGenresUrl = '$baseUrlPath/genre/tv/list?language=en';
 
     getMovieProvidersByMovieID = '$baseUrlPath/movie/$id/watch/providers';
-    getShowProvidersByShowID = '$baseUrlPath/show/$id/watch/providers';
+    getShowProvidersByShowID = '$baseUrlPath/tv/$id/watch/providers';
     // Get the streaming provider information for movies
     getMovieStreamingProviderInfo =
         '$baseUrlPath/watch/providers/movie?language=en-US';
