@@ -283,6 +283,7 @@ class _NewDetailedState extends State<NewDetailed> {
           elevation: 10.0,
         ),
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(
               children: [
@@ -296,16 +297,24 @@ class _NewDetailedState extends State<NewDetailed> {
                       const CircularProgressIndicator(),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
-                Column(
+                const Column(
                   children: [
-                    const Text("Test"),
+                    Text("Test"),
                   ],
                 ),
               ],
             ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12.0),
+              child: Text(
+                "Stream",
+                      style: Theme.of(context).textTheme.displayMedium,
+                textAlign: TextAlign.left,
+              ),
+            ),
             Container(
               margin:
-                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 5.0),
+                  const EdgeInsets.only(bottom: 12.0, left: 5.0, right: 5.0),
               height: 92.0,
               child: ListView.builder(
                 itemCount: currentProviders.length,
@@ -316,7 +325,8 @@ class _NewDetailedState extends State<NewDetailed> {
                       "https://image.tmdb.org/t/p/w92${provider.logoPath}";
 
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 6.0, horizontal: 6.0),
                     child: InkWell(
                       onTap: () {
                         //call to open provider app?
@@ -342,7 +352,7 @@ class _NewDetailedState extends State<NewDetailed> {
                           imageUrl: providerImageUrl,
                           errorWidget: (context, url, error) =>
                               const Icon(Icons.error),
-                              fit: BoxFit.fill,
+                          fit: BoxFit.fill,
                         ),
                       ),
                     ),
