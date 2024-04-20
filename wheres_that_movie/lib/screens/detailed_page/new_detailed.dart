@@ -308,61 +308,72 @@ class _NewDetailedState extends State<NewDetailed> {
               padding: const EdgeInsets.only(left: 12.0),
               child: Text(
                 "Stream",
-                      style: Theme.of(context).textTheme.displayMedium,
+                style: Theme.of(context).textTheme.displayMedium,
                 textAlign: TextAlign.left,
               ),
             ),
-            Container(
-              margin:
-                  const EdgeInsets.only(bottom: 12.0, left: 5.0, right: 5.0),
-              height: 92.0,
-              child: ListView.builder(
-                itemCount: currentProviders.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: ((context, index) {
-                  Provider provider = currentProviders[index];
-                  String providerImageUrl =
-                      "https://image.tmdb.org/t/p/w92${provider.logoPath}";
-
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 6.0, horizontal: 6.0),
-                    child: InkWell(
-                      onTap: () {
-                        //call to open provider app?
-                      },
-                      child: Container(
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(12.0),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color:
-                                  Colors.black.withOpacity(0.5), // Shadow color
-                              spreadRadius: 2, // Spread radius
-                              blurRadius: 5, // Blur radius
-                              offset: const Offset(
-                                  1, 2), // Offset from the top left corner
-                            ),
-                          ],
-                        ),
-                        child: CachedNetworkImage(
-                          imageUrl: providerImageUrl,
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-              ),
-            )
+            displayList("streamingProviders"),
+            displayList("rentProviders"),
+            displayList("buyProviders"),
           ],
         ),
       );
     }
+  }
+
+  // providerType needs to be
+  // streamingProviders
+  // rentProviders
+  // buyProviders
+  Widget displayList(String providerType) {
+    if (allProviders[providerType] == null) {
+      return Text("Could not load $providerType");
+    } else if (allProviders[providerType]!.isEmpty) {
+      return Text("There are no $providerType providers");
+    }
+    return (Container(
+      margin: const EdgeInsets.only(bottom: 12.0, left: 5.0, right: 5.0),
+      height: 92.0,
+      child: ListView.builder(
+        itemCount: allProviders[providerType]!.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: ((context, index) {
+          Provider provider = allProviders[providerType]![index];
+          String providerImageUrl =
+              "https://image.tmdb.org/t/p/w92${provider.logoPath}";
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
+            child: InkWell(
+              onTap: () {
+                //call to open provider app?
+              },
+              child: Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(12.0),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.5), // Shadow color
+                      spreadRadius: 2, // Spread radius
+                      blurRadius: 5, // Blur radius
+                      offset:
+                          const Offset(1, 2), // Offset from the top left corner
+                    ),
+                  ],
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: providerImageUrl,
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    ));
   }
 }
