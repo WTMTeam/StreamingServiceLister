@@ -213,6 +213,7 @@ class _MyLoggedInState extends State<MyLoggedIn> {
         ],
         centerTitle: true,
         backgroundColor: Theme.of(context).canvasColor,
+        surfaceTintColor: Colors.transparent,
         shadowColor: Theme.of(context).colorScheme.secondary,
         elevation: 10.0,
       ),

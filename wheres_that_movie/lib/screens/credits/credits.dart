@@ -29,6 +29,8 @@ class Credits extends StatelessWidget {
         title: Text("Credits", style: Theme.of(context).textTheme.displayLarge),
         centerTitle: true,
         backgroundColor: Theme.of(context).canvasColor,
+        surfaceTintColor: Colors.transparent,
+        shadowColor: Theme.of(context).colorScheme.secondary,
         elevation: 10.0,
       ),
       body: SafeArea(

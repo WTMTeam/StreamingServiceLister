@@ -166,9 +166,10 @@ class _SuggestionsState extends State<Suggestions> {
         ),
         centerTitle: true,
         backgroundColor: Theme.of(context).canvasColor,
+        surfaceTintColor: Colors.transparent,
+        shadowColor: Theme.of(context).colorScheme.secondary,
         elevation: 10.0,
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
           controller: _scrollController,
@@ -191,7 +192,6 @@ class _SuggestionsState extends State<Suggestions> {
                     },
                   ),
                 ),
-
                 Container(
                   margin: const EdgeInsets.only(
                       top: 5.0, bottom: 5.0, left: 10.0, right: 10.0),
@@ -229,7 +229,6 @@ class _SuggestionsState extends State<Suggestions> {
                     ),
                   ),
                 ),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -269,7 +268,6 @@ class _SuggestionsState extends State<Suggestions> {
                         ),
                       ],
                     ),
-
                     Column(
                       children: [
                         ElevatedButton.icon(
@@ -311,7 +309,6 @@ class _SuggestionsState extends State<Suggestions> {
                     ),
                   ],
                 ),
-
                 Padding(
                   padding: const EdgeInsets.symmetric(
                       vertical: 6.0, horizontal: 20.0),
@@ -320,7 +317,6 @@ class _SuggestionsState extends State<Suggestions> {
                     color: Theme.of(context).highlightColor,
                   ),
                 ),
-
                 if (currentProviders != null)
                   if (!providerSelectAll)
                     SingleChildScrollView(
@@ -351,7 +347,6 @@ class _SuggestionsState extends State<Suggestions> {
                             .toList(),
                       ),
                     )
-
                   else
                     ElevatedButton(
                       onPressed: () {},
@@ -367,7 +362,6 @@ class _SuggestionsState extends State<Suggestions> {
                               color: Theme.of(context).primaryColor)),
                       child: const Text("All Providers"),
                     ),
-
                 if (currentGenres != null)
                   if (!genreSelectAll)
                     SingleChildScrollView(
@@ -397,7 +391,6 @@ class _SuggestionsState extends State<Suggestions> {
                       ),
                     )
                   else
-
                     ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
@@ -412,7 +405,6 @@ class _SuggestionsState extends State<Suggestions> {
                               color: Theme.of(context).primaryColor)),
                       child: const Text("All Genres"),
                     ),
-
                 ElevatedButton(
                   child: const Text("Get Suggestions"),
                   onPressed: () async {
@@ -436,7 +428,6 @@ class _SuggestionsState extends State<Suggestions> {
                     }
                   },
                 ),
-
                 Padding(
                   padding:
                       const EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),

@@ -351,6 +351,7 @@ class _DetailedPageState extends State<DetailedPage> {
                   ),
             centerTitle: true,
             backgroundColor: Theme.of(context).canvasColor,
+            surfaceTintColor: Colors.transparent,
             elevation: 10.0,
           ),
           body: SafeArea(
