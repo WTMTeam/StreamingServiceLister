@@ -399,110 +399,128 @@ class _MyLoggedInState extends State<MyLoggedIn> {
 
       // Settings Menu
       drawer: Drawer(
+          backgroundColor: Theme.of(context).canvasColor,
           child: Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 70.0, horizontal: 10.0),
-              children: [
-                Row(
-                  children: <Widget>[
-                    const Padding(padding: EdgeInsets.only(left: 5.0)),
-                    Image.asset(
-                      'assets/logo2.png',
-                      width: 45,
-                      height: 45,
+            children: <Widget>[
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 70.0, horizontal: 10.0),
+                  children: [
+                    Row(
+                      children: <Widget>[
+                        const Padding(padding: EdgeInsets.only(left: 5.0)),
+                        Image.asset(
+                          'assets/logo2.png',
+                          width: 45,
+                          height: 45,
+                        ),
+
+                        const SizedBox(
+                          width: 10.0,
+                        ),
+                        // Add the logged in users name
+                        Text(
+                          "WTM",
+                          style: Theme.of(context).textTheme.displayLarge,
+                        ),
+                      ],
                     ),
 
+                    // Add some space between the username/logo and the first option
                     const SizedBox(
-                      width: 10.0,
+                      height: 20.0,
                     ),
-                    // Add the logged in users name
-                    Text(
-                      "WTM",
-                      style: Theme.of(context).textTheme.displayLarge,
+
+                    Card(
+                      color: Theme.of(context).cardColor,
+                      child: ListTile(
+                        title: Text(
+                          "My List",
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                        leading: Icon(
+                          Icons.list,
+                          color: Theme.of(context).iconTheme.color,
+                        ),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const MyList(),
+                          ));
+                        },
+                      ),
+                    ),
+
+                    Card(
+                      color: Theme.of(context).cardColor,
+                      child: ListTile(
+                        title: Text(
+                          "Suggestions",
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                        // leading: const Icon(CupertinoIcons.shuffle_medium),
+                        leading: Icon(
+                          CupertinoIcons.wand_rays,
+                          color: Theme.of(context).iconTheme.color,
+                        ),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const Suggestions(),
+                          ));
+                        },
+                      ),
+                    ),
+
+                    Card(
+                      color: Theme.of(context).cardColor,
+                      child: SwitchListTile(
+                        activeColor: Theme.of(context).canvasColor,
+                        title: Text(
+                          "Theme",
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                        secondary: Icon(
+                          themeState.getDarkTheme
+                              ? Icons.dark_mode_outlined
+                              : Icons.light_mode_outlined,
+                          color: Theme.of(context).iconTheme.color,
+                        ),
+                        onChanged: (bool value) {
+                          setState(() {
+                            themeState.setDarkTheme = value;
+                            previousSearch = "";
+                          });
+                        },
+                        value: themeState.getDarkTheme,
+                      ),
                     ),
                   ],
                 ),
-
-                // Add some space between the username/logo and the first option
-                const SizedBox(
-                  height: 20.0,
-                ),
-
-                Card(
-                  child: ListTile(
-                    title: Text(
-                      "My List",
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                    leading: const Icon(Icons.list),
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const MyList(),
-                      ));
-                    },
-                  ),
-                ),
-
-                Card(
-                  child: ListTile(
-                    title: Text(
-                      "Suggestions",
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                    // leading: const Icon(CupertinoIcons.shuffle_medium),
-                    leading: const Icon(CupertinoIcons.wand_rays),
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const Suggestions(),
-                      ));
-                    },
-                  ),
-                ),
-
-                Card(
-                  child: SwitchListTile(
-                    title: Text(
-                      "Theme",
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                    secondary: Icon(themeState.getDarkTheme
-                        ? Icons.dark_mode_outlined
-                        : Icons.light_mode_outlined),
-                    onChanged: (bool value) {
-                      setState(() {
-                        themeState.setDarkTheme = value;
-                        previousSearch = "";
-                      });
-                    },
-                    value: themeState.getDarkTheme,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding:
-                const EdgeInsets.only(bottom: 50.0, left: 10.0, right: 10.0),
-            child: Card(
-              child: ListTile(
-                title: Text(
-                  "Credits",
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-                leading: const Icon(Icons.info_outline),
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const Credits(),
-                  ));
-                },
               ),
-            ),
-          )
-        ],
-      )),
+              Container(
+                padding: const EdgeInsets.only(
+                    bottom: 50.0, left: 10.0, right: 10.0),
+                child: Card(
+                  color: Theme.of(context).cardColor,
+                  child: ListTile(
+                    title: Text(
+                      "Credits",
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                    leading: Icon(
+                      Icons.info_outline,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const Credits(),
+                      ));
+                    },
+                  ),
+                ),
+              )
+            ],
+          )),
     );
   }
 }

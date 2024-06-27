@@ -74,7 +74,8 @@ class Styles {
 
         //bodyLarge: TextStyle(fontSize: ),
 
-        labelMedium: const TextStyle(fontSize: 20.0),
+        labelMedium:
+            TextStyle(fontSize: 20.0, color: isDarkTheme ? _light : _dark),
       ),
 
       textSelectionTheme: const TextSelectionThemeData(
@@ -123,6 +124,10 @@ class Styles {
 // ------------------------------------------------------------------ //
 //                         Icon Themes                                //
 // ------------------------------------------------------------------ //
+      //cardColor: isDarkTheme ? _myCardColor : _lightCardColor,
+      iconTheme: Theme.of(context).iconTheme.copyWith(
+            color: isDarkTheme ? _light : _dark,
+          ),
 
 // ------------------------------------------------------------------ //
 //                       Checkbox Themes                              //
