@@ -275,14 +275,15 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                 ),
               ),
               ElevatedButton(
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 100.0),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 100.0),
                   child: Text(
                     "Search",
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.headlineMedium,
+                    // style: TextStyle(
+                    //   fontSize: 20.0,
+                    //   fontWeight: FontWeight.bold,
+                    // ),
                   ),
                 ),
                 onPressed: () {
@@ -366,14 +367,11 @@ class _MyLoggedInState extends State<MyLoggedIn> {
               Container(
                 margin: const EdgeInsets.only(bottom: 10.0),
                 child: ElevatedButton(
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 70.0),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 70.0),
                     child: Text(
                       "See Trending",
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
                   ),
                   onPressed: () {

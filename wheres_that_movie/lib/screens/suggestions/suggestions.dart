@@ -247,7 +247,10 @@ class _SuggestionsState extends State<Suggestions> {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                          child: const Text("Providers"),
+                          child: Text(
+                            "Providers",
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
                         ),
                         const SizedBox(
                           height: 4.0,
@@ -264,7 +267,10 @@ class _SuggestionsState extends State<Suggestions> {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                          child: const Text("Genres"),
+                          child: Text(
+                            "Genres",
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
                         ),
                       ],
                     ),
@@ -283,13 +289,24 @@ class _SuggestionsState extends State<Suggestions> {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                          label: Text(currentMovieOrShow),
+                          label: Text(
+                            currentMovieOrShow,
+                            // headlineSmall:
+                            //     const TextStyle(fontSize: 16.0, color: _light, letterSpacing: 1.2),
+                            style: TextStyle(
+                                color: Theme.of(context).cardTheme.color,
+                                fontSize: 16,
+                                letterSpacing: 1.2),
+                          ),
                         ),
                         const SizedBox(
                           height: 4.0,
                         ),
                         ElevatedButton.icon(
-                          icon: const Icon(CupertinoIcons.timer),
+                          icon: Icon(
+                            CupertinoIcons.timer,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
                           onPressed: () {
                             if (currentLength.runtimeType != int) {
                               currentLength = null;
@@ -302,8 +319,16 @@ class _SuggestionsState extends State<Suggestions> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20.0))),
                           label: currentLength.runtimeType == int
-                              ? Text('${currentLength.toString()}min')
-                              : const Text("Choose Length"),
+                              ? Text(
+                                  '${currentLength.toString()}min',
+                                  style:
+                                      Theme.of(context).textTheme.headlineSmall,
+                                )
+                              : Text(
+                                  "Choose Length",
+                                  style:
+                                      Theme.of(context).textTheme.headlineSmall,
+                                ),
                         ),
                       ],
                     ),
@@ -406,7 +431,10 @@ class _SuggestionsState extends State<Suggestions> {
                       child: const Text("All Genres"),
                     ),
                 ElevatedButton(
-                  child: const Text("Get Suggestions"),
+                  child: Text(
+                    "Get Suggestions",
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
                   onPressed: () async {
                     try {
                       // Call the asynchronous function and wait for the result

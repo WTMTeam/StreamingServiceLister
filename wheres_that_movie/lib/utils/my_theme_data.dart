@@ -40,6 +40,7 @@ class Styles {
       // Primary fixed the icon color
       colorScheme: ThemeData().colorScheme.copyWith(
             primary: isDarkTheme ? _light : _dark,
+            onPrimary: isDarkTheme ? _dark : _light,
             // primary: isDarkTheme ? _red : _otherRed,
             secondary:
                 //isDarkTheme ? const Color(0xFF1a1f3c) : const Color(0xFFE8FDFD),
@@ -72,6 +73,10 @@ class Styles {
             fontSize: 16.0,
             fontWeight: FontWeight.bold),
 
+        headlineSmall:
+            const TextStyle(fontSize: 16.0, color: _light, letterSpacing: 1.2),
+        headlineMedium: const TextStyle(
+            fontSize: 20.0, fontWeight: FontWeight.bold, color: _light),
         //bodyLarge: TextStyle(fontSize: ),
 
         labelMedium:

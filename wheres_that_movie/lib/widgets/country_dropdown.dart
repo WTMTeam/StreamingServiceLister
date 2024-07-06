@@ -85,20 +85,53 @@ class _CountryDropdownState extends State<CountryDropdown> {
   Widget build(BuildContext context) {
     return DropdownSearch<String>(
       popupProps: PopupProps.menu(
-          showSelectedItems: true,
-          showSearchBox: true,
-          searchDelay: const Duration(milliseconds: 100),
-          menuProps: MenuProps(
-              borderRadius: BorderRadius.circular(10.0),
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer),
-          constraints: const BoxConstraints(maxHeight: 200)),
+        showSelectedItems: true,
+        showSearchBox: true,
+        searchDelay: const Duration(milliseconds: 100),
+        menuProps: MenuProps(
+            borderRadius: BorderRadius.circular(10.0),
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer),
+        constraints: const BoxConstraints(maxHeight: 200),
+        itemBuilder: (context, item, isSelected) {
+          return Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Text(
+              item,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          );
+        },
+        searchFieldProps: TextFieldProps(
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          decoration: InputDecoration(
+            hintText: 'Search...',
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ),
+        emptyBuilder: (context, searchEntry) {
+          return Center(
+            child: Text(
+              'No results found',
+              style: Theme.of(context).textTheme.displayMedium,
+            ),
+          );
+        },
+      ),
       items: countryNames,
       dropdownDecoratorProps: DropDownDecoratorProps(
+          //baseStyle: Theme.of(context).textTheme.titleSmall,
           dropdownSearchDecoration: InputDecoration(
         border: OutlineInputBorder(
           borderSide: BorderSide(
-            color: Theme.of(context).primaryColor, // Set the border color here
-            width: 2.0, // Set the border width here
+            color: Theme.of(context).primaryColor,
+            width: 2.0,
           ),
         ),
         enabledBorder: OutlineInputBorder(
@@ -113,6 +146,14 @@ class _CountryDropdownState extends State<CountryDropdown> {
         await Future.delayed(const Duration(milliseconds: 500));
         _setCountry(code);
         widget.onChanged(code);
+      },
+      dropdownBuilder: (context, selectedItem) {
+        return Text(
+          selectedItem ?? '',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        );
       },
     );
   }
