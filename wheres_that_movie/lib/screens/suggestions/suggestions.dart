@@ -204,6 +204,7 @@ class _SuggestionsState extends State<Suggestions> {
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 15.0),
                     child: DropdownButton(
+                      iconEnabledColor: Theme.of(context).cardColor,
                       isExpanded: true,
                       underline: Container(),
                       borderRadius: BorderRadius.circular(10.0),
@@ -216,7 +217,7 @@ class _SuggestionsState extends State<Suggestions> {
                               value: e,
                               child: Text(
                                 e,
-                                style: Theme.of(context).textTheme.bodyLarge,
+                                style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ),
                           )

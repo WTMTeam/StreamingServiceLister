@@ -125,6 +125,10 @@ class _CountryDropdownState extends State<CountryDropdown> {
         },
       ),
       items: countryNames,
+      dropdownButtonProps: DropdownButtonProps(
+        color: Theme.of(context).cardColor,
+      ),
+      //dropdownButtonProps: DropDownDecoratorProps,
       dropdownDecoratorProps: DropDownDecoratorProps(
           //baseStyle: Theme.of(context).textTheme.titleSmall,
           dropdownSearchDecoration: InputDecoration(
@@ -138,6 +142,7 @@ class _CountryDropdownState extends State<CountryDropdown> {
           borderSide: BorderSide(color: Theme.of(context).primaryColor),
           borderRadius: BorderRadius.circular(18.0),
         ),
+        //labelStyle: Theme.of(context).textTheme.labelSmall,
         labelText: "Select Country",
       )),
       selectedItem: selectedCountry,
@@ -150,9 +155,7 @@ class _CountryDropdownState extends State<CountryDropdown> {
       dropdownBuilder: (context, selectedItem) {
         return Text(
           selectedItem ?? '',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-          ),
+          style: Theme.of(context).textTheme.bodyMedium,
         );
       },
     );

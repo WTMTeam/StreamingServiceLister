@@ -81,6 +81,15 @@ class Styles {
 
         labelMedium:
             TextStyle(fontSize: 20.0, color: isDarkTheme ? _light : _dark),
+        labelSmall:
+            TextStyle(fontSize: 16.0, color: isDarkTheme ? _light : _dark),
+
+        bodyLarge:
+            TextStyle(fontSize: 18.0, color: isDarkTheme ? _light : _dark),
+        bodyMedium:
+            TextStyle(fontSize: 14.0, color: isDarkTheme ? _light : _dark),
+        bodySmall:
+            TextStyle(fontSize: 12.0, color: isDarkTheme ? _light : _dark),
       ),
 
       textSelectionTheme: const TextSelectionThemeData(
