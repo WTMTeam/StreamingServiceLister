@@ -51,12 +51,11 @@ class Credits extends StatelessWidget {
                           left: 18.0, right: 8.0, bottom: 8.0),
                       child: Text(
                         "Special thanks to Dr. Scott Sigman for all the support during the development of this app.",
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary),
                       ),
                     ),
                   ],
-                  // tilePadding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  // backgroundColor: Theme.of(context).cardColor,
                 ),
               ),
               Card(
@@ -73,12 +72,11 @@ class Credits extends StatelessWidget {
                           left: 18.0, right: 8.0, bottom: 8.0),
                       child: Text(
                         "Thanks to everyone who is helping out by testing the app. Your feedback is truly appreciated.",
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary),
                       ),
                     ),
                   ],
-                  // tilePadding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  // backgroundColor: Theme.of(context).cardColor,
                 ),
               ),
               Card(
@@ -95,12 +93,11 @@ class Credits extends StatelessWidget {
                           left: 18.0, right: 8.0, bottom: 8.0),
                       child: Text(
                         "This product uses the TMDB API but is not endorsed or certified by TMDB. The provider data is from JustWatch.",
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary),
                       ),
                     ),
                   ],
-                  // tilePadding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  // backgroundColor: Theme.of(context).cardColor,
                 ),
               ),
             ],
