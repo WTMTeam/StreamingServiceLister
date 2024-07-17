@@ -38,9 +38,12 @@ class Credits extends StatelessWidget {
           child: ListView(
             children: [
               Card(
+                color: Theme.of(context).cardColor,
                 margin: const EdgeInsets.symmetric(
                     horizontal: 20.0, vertical: 10.0),
                 child: ExpansionTile(
+                  // backgroundColor:
+                  //     Theme.of(context).colorScheme.primaryContainer,
                   title: Text(
                     "Scott Sigman",
                     style: Theme.of(context).textTheme.displayMedium,
@@ -50,15 +53,14 @@ class Credits extends StatelessWidget {
                       padding: const EdgeInsets.only(
                           left: 18.0, right: 8.0, bottom: 8.0),
                       child: Text(
-                        "Special thanks to Dr. Scott Sigman for all the support during the development of this app.",
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary),
-                      ),
+                          "Special thanks to Dr. Scott Sigman for all the support during the development of this app.",
+                          style: Theme.of(context).textTheme.bodyLarge),
                     ),
                   ],
                 ),
               ),
               Card(
+                color: Theme.of(context).cardColor,
                 margin: const EdgeInsets.symmetric(
                     horizontal: 20.0, vertical: 10.0),
                 child: ExpansionTile(
@@ -71,15 +73,14 @@ class Credits extends StatelessWidget {
                       padding: const EdgeInsets.only(
                           left: 18.0, right: 8.0, bottom: 8.0),
                       child: Text(
-                        "Thanks to everyone who is helping out by testing the app. Your feedback is truly appreciated.",
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary),
-                      ),
+                          "Thanks to everyone who is helping out by testing the app. Your feedback is truly appreciated.",
+                          style: Theme.of(context).textTheme.bodyLarge),
                     ),
                   ],
                 ),
               ),
               Card(
+                color: Theme.of(context).cardColor,
                 margin: const EdgeInsets.symmetric(
                     horizontal: 20.0, vertical: 10.0),
                 child: ExpansionTile(
@@ -92,10 +93,8 @@ class Credits extends StatelessWidget {
                       padding: const EdgeInsets.only(
                           left: 18.0, right: 8.0, bottom: 8.0),
                       child: Text(
-                        "This product uses the TMDB API but is not endorsed or certified by TMDB. The provider data is from JustWatch.",
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary),
-                      ),
+                          "This product uses the TMDB API but is not endorsed or certified by TMDB. The provider data is from JustWatch.",
+                          style: Theme.of(context).textTheme.bodyLarge),
                     ),
                   ],
                 ),
