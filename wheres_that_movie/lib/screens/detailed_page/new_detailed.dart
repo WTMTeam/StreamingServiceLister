@@ -286,36 +286,58 @@ class _NewDetailedState extends State<NewDetailed> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Stack(
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Stack(
+                children: [
+                  Center(
+                    child: Container(
+                      clipBehavior: Clip.antiAlias,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(28.0)),
+                        shape: BoxShape.rectangle,
+                      ),
+                      child: CachedNetworkImage(
+                        imageUrl: backdropUrl,
+                        fit: BoxFit.fitWidth,
+                        width: width - 10,
+                        errorWidget: (context, posterUrl, error) => const Icon(
+                          Icons.no_photography_outlined,
+                          size: 50,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Row(
               children: [
-                CachedNetworkImage(
-                  imageUrl: backdropUrl,
-                  fit: BoxFit.fitWidth,
-                  width: width,
-                  //height: height,
-                  // You can add placeholder and error widgets if needed
-                  placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                Padding(
+                  padding: const EdgeInsets.only(left: 12.0),
+                  child: Text(
+                    "Stream",
+                    style: Theme.of(context).textTheme.displayMedium,
+                    textAlign: TextAlign.left,
+                  ),
                 ),
-                const Column(
-                  children: [
-                    Text("Test"),
-                  ],
+                const Spacer(),
+                IconButton(
+                  onPressed: () {
+                    // TODO: When clicked, show options for Stream, Rent and Buy.
+                    // then switch to the selected list to show.
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(
+                    CupertinoIcons.line_horizontal_3_decrease,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 12.0),
-              child: Text(
-                "Stream",
-                style: Theme.of(context).textTheme.displayMedium,
-                textAlign: TextAlign.left,
-              ),
-            ),
             displayList("streamingProviders"),
-            displayList("rentProviders"),
-            displayList("buyProviders"),
+            // displayList("rentProviders"),
+            // displayList("buyProviders"),
           ],
         ),
       );
