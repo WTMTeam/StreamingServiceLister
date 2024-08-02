@@ -324,9 +324,83 @@ class _NewDetailedState extends State<NewDetailed> {
                 const Spacer(),
                 IconButton(
                   onPressed: () {
+                    showModalBottomSheet(
+                      backgroundColor: Theme.of(context).cardColor,
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              top: 8.0, bottom: 16.0, left: 8.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              ListTile(
+                                leading: Icon(
+                                  Icons.live_tv,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                title: Text(
+                                  'Stream',
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
+                                ),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  // TODO: Switch to Stream list
+                                },
+                              ),
+                              Divider(
+                                color: Theme.of(context).canvasColor,
+                                thickness: 1,
+                                indent: 12,
+                                endIndent: 12,
+                              ),
+                              ListTile(
+                                leading: Icon(
+                                  Icons.local_movies_outlined,
+                                  //Icons.weekend,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                title: Text(
+                                  'Rent',
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
+                                ),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  // TODO: Switch to Rent list
+                                },
+                              ),
+                              Divider(
+                                color: Theme.of(context).canvasColor,
+                                thickness: 1,
+                                indent: 12,
+                                endIndent: 12,
+                              ),
+                              ListTile(
+                                leading: Icon(
+                                  Icons.shopping_cart,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                title: Text(
+                                  'Buy',
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
+                                ),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  // TODO: Switch to Buy list
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+
                     // TODO: When clicked, show options for Stream, Rent and Buy.
                     // then switch to the selected list to show.
-                    Navigator.of(context).pop();
+                    // Navigator.of(context).pop();
                   },
                   icon: Icon(
                     CupertinoIcons.line_horizontal_3_decrease,
