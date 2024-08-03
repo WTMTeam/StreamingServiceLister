@@ -9,6 +9,7 @@ import 'package:wheres_that_movie/api/models/movie_model.dart';
 import 'package:wheres_that_movie/api/models/provider_model.dart';
 import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/database/database_helper.dart';
+import 'package:wheres_that_movie/screens/detailed_page/local_widgets/display_description.dart';
 import 'package:wheres_that_movie/screens/detailed_page/local_widgets/options_modal.dart';
 
 class NewDetailed extends StatefulWidget {
@@ -346,8 +347,15 @@ class _NewDetailedState extends State<NewDetailed> {
               ],
             ),
             displayList(currentOption),
-            // displayList("rentProviders"),
-            // displayList("buyProviders"),
+            DescriptionCard(
+                description: widget.movie?.overview ??
+                    widget.show?.overview ??
+                    'No overview available'),
+// DescriptionCard(
+//   description: "Your description here",
+//   padding: EdgeInsets.all(16.0),
+//   textStyle: TextStyle(fontSize: 16, color: Colors.blue),
+// )
           ],
         ),
       );
