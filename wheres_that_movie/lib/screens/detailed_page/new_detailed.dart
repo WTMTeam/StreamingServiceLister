@@ -9,6 +9,7 @@ import 'package:wheres_that_movie/api/models/movie_model.dart';
 import 'package:wheres_that_movie/api/models/provider_model.dart';
 import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/database/database_helper.dart';
+import 'package:wheres_that_movie/screens/detailed_page/local_widgets/options_modal.dart';
 
 class NewDetailed extends StatefulWidget {
   final Movie? movie;
@@ -234,7 +235,7 @@ class _NewDetailedState extends State<NewDetailed> {
         ),
       );
     } else {
-      print("should be done loading");
+      //print("should be done loading");
       String title = "Missing Title";
       String backdropUrl = "";
 
@@ -287,7 +288,7 @@ class _NewDetailedState extends State<NewDetailed> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 8.0),
+              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Stack(
                 children: [
                   Center(
@@ -316,8 +317,8 @@ class _NewDetailedState extends State<NewDetailed> {
                 Padding(
                   padding: const EdgeInsets.only(left: 12.0),
                   child: Text(
-                    "Stream",
-                    style: Theme.of(context).textTheme.displayMedium,
+                    currentOption,
+                    style: Theme.of(context).textTheme.labelLarge,
                     textAlign: TextAlign.left,
                   ),
                 ),
@@ -328,88 +329,23 @@ class _NewDetailedState extends State<NewDetailed> {
                       backgroundColor: Theme.of(context).cardColor,
                       context: context,
                       builder: (BuildContext context) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              top: 8.0, bottom: 16.0, left: 8.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              ListTile(
-                                leading: Icon(
-                                  Icons.live_tv,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                title: Text(
-                                  'Stream',
-                                  style:
-                                      Theme.of(context).textTheme.labelMedium,
-                                ),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  // TODO: Switch to Stream list
-                                },
-                              ),
-                              Divider(
-                                color: Theme.of(context).canvasColor,
-                                thickness: 1,
-                                indent: 12,
-                                endIndent: 12,
-                              ),
-                              ListTile(
-                                leading: Icon(
-                                  Icons.local_movies_outlined,
-                                  //Icons.weekend,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                title: Text(
-                                  'Rent',
-                                  style:
-                                      Theme.of(context).textTheme.labelMedium,
-                                ),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  // TODO: Switch to Rent list
-                                },
-                              ),
-                              Divider(
-                                color: Theme.of(context).canvasColor,
-                                thickness: 1,
-                                indent: 12,
-                                endIndent: 12,
-                              ),
-                              ListTile(
-                                leading: Icon(
-                                  Icons.shopping_cart,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                title: Text(
-                                  'Buy',
-                                  style:
-                                      Theme.of(context).textTheme.labelMedium,
-                                ),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  // TODO: Switch to Buy list
-                                },
-                              ),
-                            ],
-                          ),
-                        );
+                        return optionsModal(context, (String selectedOption) {
+                          setState(() {
+                            currentOption = selectedOption;
+                          });
+                        });
                       },
                     );
-
-                    // TODO: When clicked, show options for Stream, Rent and Buy.
-                    // then switch to the selected list to show.
-                    // Navigator.of(context).pop();
                   },
                   icon: Icon(
+                    size: 32.0,
                     CupertinoIcons.line_horizontal_3_decrease,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ],
             ),
-            displayList("streamingProviders"),
+            displayList(currentOption),
             // displayList("rentProviders"),
             // displayList("buyProviders"),
           ],
@@ -422,7 +358,22 @@ class _NewDetailedState extends State<NewDetailed> {
   // streamingProviders
   // rentProviders
   // buyProviders
-  Widget displayList(String providerType) {
+  Widget displayList(String option) {
+    String providerType;
+
+    switch (option.toLowerCase()) {
+      case "stream":
+        providerType = "streamingProviders";
+        break;
+      case "rent":
+        providerType = "rentProviders";
+        break;
+      case "buy":
+        providerType = "buyProviders";
+        break;
+      default:
+        throw ArgumentError('Invalid option: $option');
+    }
     if (allProviders[providerType] == null) {
       return Text("Could not load $providerType");
     } else if (allProviders[providerType]!.isEmpty) {

@@ -79,6 +79,8 @@ class Styles {
             fontSize: 20.0, fontWeight: FontWeight.bold, color: _light),
         //bodyLarge: TextStyle(fontSize: ),
 
+        labelLarge:
+            TextStyle(fontSize: 24.0, color: isDarkTheme ? _light : _dark),
         labelMedium:
             TextStyle(fontSize: 20.0, color: isDarkTheme ? _light : _dark),
         labelSmall:
