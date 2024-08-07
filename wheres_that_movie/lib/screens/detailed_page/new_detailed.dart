@@ -5,6 +5,7 @@ import 'package:device_apps/device_apps.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wheres_that_movie/api/models/cast_model.dart';
 import 'package:wheres_that_movie/api/models/movie_model.dart';
 import 'package:wheres_that_movie/api/models/provider_model.dart';
 import 'package:wheres_that_movie/api/models/show_model.dart';
@@ -24,6 +25,10 @@ class NewDetailed extends StatefulWidget {
 class _NewDetailedState extends State<NewDetailed> {
   Map<String, List<Provider>> allProviders = {};
   List<Provider> currentProviders = [];
+  List<CastMember> cast = [];
+  //List<Person> castPersonList = [];
+  //List<CastMember> castMemebers = [];
+  List<int> castIds = [];
 
   final List<String> options = ["Stream", "Buy", "Rent"];
   final List<String> supportedProviders = [
@@ -78,11 +83,27 @@ class _NewDetailedState extends State<NewDetailed> {
         }
       });
     } catch (e) {
-      print("New Detailed");
+      print("New Detailed Error:");
       print("Error $e");
       // todo:
       //    display an error message and redirect to search page
     }
+  }
+
+  getMovieCastList(int id) async {
+    print("Movie Id: $id");
+    var castList = await CastService().getCastByMovieId(
+      movieId: id,
+    );
+    print("Got Cast");
+    print(castList);
+    setState(() {
+      cast = castList;
+    });
+  }
+
+  getShowCastList(int id) {
+    print("Show Id: $id");
   }
 
   getMyList({Movie? movie, Show? show}) async {
@@ -152,6 +173,13 @@ class _NewDetailedState extends State<NewDetailed> {
     getProviders(currentOption, countryCode,
         movie: widget.movie, show: widget.show);
     getMyList(movie: widget.movie, show: widget.show);
+
+    if (widget.movie != null) {
+      getMovieCastList(widget.movie!.movieID);
+    } else if (widget.show != null) {
+      getShowCastList(widget.show!.showID);
+    }
+
     super.initState();
   }
 
@@ -351,11 +379,15 @@ class _NewDetailedState extends State<NewDetailed> {
                 description: widget.movie?.overview ??
                     widget.show?.overview ??
                     'No overview available'),
+
+            displayCast(cast),
 // DescriptionCard(
 //   description: "Your description here",
 //   padding: EdgeInsets.all(16.0),
 //   textStyle: TextStyle(fontSize: 16, color: Colors.blue),
 // )
+
+// Get the cast
           ],
         ),
       );
@@ -422,6 +454,53 @@ class _NewDetailedState extends State<NewDetailed> {
                 ),
                 child: CachedNetworkImage(
                   imageUrl: providerImageUrl,
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    ));
+  }
+
+  Widget displayCast(List<CastMember> cast) {
+    return (Container(
+      margin: const EdgeInsets.only(bottom: 12.0, left: 5.0, right: 5.0),
+      height: 92.0,
+      child: ListView.builder(
+        itemCount: cast.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: ((context, index) {
+          CastMember castMember = cast[index];
+          String profilePath =
+              "https://image.tmdb.org/t/p/w92${castMember.profilePath}";
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
+            child: InkWell(
+              onTap: () {
+                // Go to person page
+              },
+              child: Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(12.0),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.5), // Shadow color
+                      spreadRadius: 2, // Spread radius
+                      blurRadius: 5, // Blur radius
+                      offset:
+                          const Offset(1, 2), // Offset from the top left corner
+                    ),
+                  ],
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: profilePath,
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                   fit: BoxFit.fill,
                 ),

@@ -13,12 +13,13 @@ class ApiEndPoint {
   late String getMovieProvidersByMovieID;
   late String getShowProvidersByShowID;
   late String searchMovieShowPerson;
+  late String getCastByMovieId;
 
   // * Genre Docs: https://developer.themoviedb.org/reference/genre-movie-list
 
   ApiEndPoint(
       {String? searchText,
-    int? id,
+      int? id,
       String? providerIDs,
       String? genreIDs,
       int? runtime,
@@ -38,7 +39,8 @@ class ApiEndPoint {
 // string
 // possible values are: [flatrate, free, ads, rent, buy] use in conjunction with watch_region, can be a comma (AND) or pipe (OR) separated query
 
-    searchMovieShowPerson = '$baseUrlPath/search/multi?query=$searchText&include_adult=false';
+    searchMovieShowPerson =
+        '$baseUrlPath/search/multi?query=$searchText&include_adult=false';
 
     getMovieSuggestions =
         '$baseUrlPath/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&watch_region=$region&with_genres=$genreIDs&with_watch_providers=$providerIDs&with_watch_monetization_types=flatrate|free|ads';
@@ -65,6 +67,8 @@ class ApiEndPoint {
 
     // Get the Countries used in TMDidB
     getCountries = '$baseUrlPath/configuration/countries?language=en-US';
+
+    getCastByMovieId = '$baseUrlPath/movie/$id/credits?language=en-US';
   }
 }
 
