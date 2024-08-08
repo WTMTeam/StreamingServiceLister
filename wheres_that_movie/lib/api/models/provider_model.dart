@@ -55,6 +55,11 @@ class ProviderService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
+      final dataByCountry = data['results'][countryCode];
+
+      final List<Provider> streamingList = [];
+      final List<Provider> rentList = [];
+      final List<Provider> buyList = [];
 
       final Map<String, List<Provider>> providerLists = {
         'streamingProviders': [],
@@ -62,9 +67,9 @@ class ProviderService {
         'buyProviders': [],
       };
 
-      final List<Provider> streamingList = [];
-      final List<Provider> rentList = [];
-      final List<Provider> buyList = [];
+      if (dataByCountry == null) {
+        return providerLists;
+      }
 
       final rentProviders = data['results'][countryCode]['rent'] ?? [];
       final buyProviders = data['results'][countryCode]['buy'] ?? [];
@@ -100,22 +105,14 @@ class ProviderService {
         }
       }
 
-      // Sort the providerList based on displayPriority
-      // streamingProviders
-      //     .sort((a, b) => a.displayPriority.compareTo(b.displayPriority));
-
       providerLists['streamingProviders'] = streamingList;
       providerLists['rentProviders'] = rentList;
       providerLists['buyProviders'] = buyList;
 
-      print(providerLists['streamingProviders']);
-      print(providerLists['rentProviders']);
-      print(providerLists['buyProviders']);
-
       return providerLists;
     } else {
-      print("Exception in getProvidersByIdAndType");
-      throw Exception('HTTP FAILED with status code: ${response.statusCode}');
+      throw Exception(
+          'getProvidersByIdAndType HTTP FAILED with status code: ${response.statusCode}');
     }
   }
 

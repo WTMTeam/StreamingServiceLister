@@ -53,13 +53,12 @@ class _NewDetailedState extends State<NewDetailed> {
     try {
       int id;
       bool isMovie;
-      // Get the providers
+
       if (movie != null) {
         id = movie.movieID;
         isMovie = true;
         allProviders = await ProviderService()
             .getProvidersByIdAndType(id, isMovie, countryCode);
-        print("New Detailed, Providers: $allProviders");
         _isLoading = false;
       } else if (show != null) {
         id = show.showID;
@@ -70,8 +69,6 @@ class _NewDetailedState extends State<NewDetailed> {
       } else {
         print("STOP NOT MOVIE OR SHOW");
       }
-
-      print("New Detailed Providers $allProviders");
 
       setState(() {
         if (currentOption == "Stream") {
@@ -91,12 +88,10 @@ class _NewDetailedState extends State<NewDetailed> {
   }
 
   getMovieCastList(int id) async {
-    print("Movie Id: $id");
     var castList = await CastService().getCastByMovieId(
       movieId: id,
     );
-    print("Got Cast");
-    print(castList);
+
     setState(() {
       cast = castList;
     });
@@ -400,16 +395,20 @@ class _NewDetailedState extends State<NewDetailed> {
   // buyProviders
   Widget displayList(String option) {
     String providerType;
+    String errorText;
 
     switch (option.toLowerCase()) {
       case "stream":
         providerType = "streamingProviders";
+        errorText = "streaming";
         break;
       case "rent":
         providerType = "rentProviders";
+        errorText = "renting";
         break;
       case "buy":
         providerType = "buyProviders";
+        errorText = "buying";
         break;
       default:
         throw ArgumentError('Invalid option: $option');
@@ -417,7 +416,12 @@ class _NewDetailedState extends State<NewDetailed> {
     if (allProviders[providerType] == null) {
       return Text("Could not load $providerType");
     } else if (allProviders[providerType]!.isEmpty) {
-      return Text("There are no $providerType providers");
+      return Center(
+        child: Text(
+          "There are no $errorText providers",
+          style: Theme.of(context).textTheme.displayMedium,
+        ),
+      );
     }
     return (Container(
       margin: const EdgeInsets.only(bottom: 12.0, left: 5.0, right: 5.0),
