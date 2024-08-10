@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wheres_that_movie/api/models/cast_model.dart';
+import 'package:wheres_that_movie/api/models/image_model.dart';
 import 'package:wheres_that_movie/api/models/movie_model.dart';
 import 'package:wheres_that_movie/api/models/provider_model.dart';
 import 'package:wheres_that_movie/api/models/show_model.dart';
@@ -26,6 +28,7 @@ class _NewDetailedState extends State<NewDetailed> {
   Map<String, List<Provider>> allProviders = {};
   List<Provider> currentProviders = [];
   List<CastMember> cast = [];
+  List<MovieImage> movieImages = [];
   //List<Person> castPersonList = [];
   //List<CastMember> castMemebers = [];
   List<int> castIds = [];
@@ -101,6 +104,15 @@ class _NewDetailedState extends State<NewDetailed> {
     print("Show Id: $id");
   }
 
+  getMovieImages(int id) async {
+    var imageList = await ImageService()
+        .getMovieImagesByType(imagetype: ImageType.backdrops, movieId: id);
+
+    setState(() {
+      movieImages = imageList;
+    });
+  }
+
   getMyList({Movie? movie, Show? show}) async {
     int id = 0;
 
@@ -171,6 +183,7 @@ class _NewDetailedState extends State<NewDetailed> {
 
     if (widget.movie != null) {
       getMovieCastList(widget.movie!.movieID);
+      getMovieImages(widget.movie!.movieID);
     } else if (widget.show != null) {
       getShowCastList(widget.show!.showID);
     }
@@ -259,24 +272,12 @@ class _NewDetailedState extends State<NewDetailed> {
         ),
       );
     } else {
-      //print("should be done loading");
       String title = "Missing Title";
-      String backdropUrl = "";
-
-      double width = MediaQuery.of(context).size.width;
-      double height = MediaQuery.of(context).size.height;
-      int widthInt = width.toInt();
 
       if (widget.movie != null) {
         title = widget.movie!.title;
-        backdropUrl =
-            "https://image.tmdb.org/t/p/w300${widget.movie!.backdropPath}";
-
-        //backdropUrl = "https://image.tmdb.org/t/p/w45${widget.movie!.backdropPath}";
       } else if (widget.show != null) {
         title = widget.show!.title;
-        backdropUrl =
-            "https://image.tmdb.org/t/p/w300${widget.show!.backdropPath}";
       }
 
       return Scaffold(
@@ -308,85 +309,111 @@ class _NewDetailedState extends State<NewDetailed> {
           shadowColor: Theme.of(context).colorScheme.secondary,
           elevation: 10.0,
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: Stack(
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              movieImages.isEmpty
+                  ? const SizedBox()
+                  : displayImages(movieImages),
+              Row(
                 children: [
-                  Center(
-                    child: Container(
-                      clipBehavior: Clip.antiAlias,
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(28.0)),
-                        shape: BoxShape.rectangle,
-                      ),
-                      child: CachedNetworkImage(
-                        imageUrl: backdropUrl,
-                        fit: BoxFit.fitWidth,
-                        width: width - 10,
-                        errorWidget: (context, posterUrl, error) => const Icon(
-                          Icons.no_photography_outlined,
-                          size: 50,
-                        ),
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: Text(
+                      currentOption,
+                      style: Theme.of(context).textTheme.labelLarge,
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        backgroundColor: Theme.of(context).cardColor,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return optionsModal(context, (String selectedOption) {
+                            setState(() {
+                              currentOption = selectedOption;
+                            });
+                          });
+                        },
+                      );
+                    },
+                    icon: Icon(
+                      size: 32.0,
+                      CupertinoIcons.line_horizontal_3_decrease,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ],
               ),
-            ),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 12.0),
-                  child: Text(
-                    currentOption,
-                    style: Theme.of(context).textTheme.labelLarge,
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                const Spacer(),
-                IconButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      backgroundColor: Theme.of(context).cardColor,
-                      context: context,
-                      builder: (BuildContext context) {
-                        return optionsModal(context, (String selectedOption) {
-                          setState(() {
-                            currentOption = selectedOption;
-                          });
-                        });
-                      },
-                    );
-                  },
-                  icon: Icon(
-                    size: 32.0,
-                    CupertinoIcons.line_horizontal_3_decrease,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            displayList(currentOption),
-            DescriptionCard(
-                description: widget.movie?.overview ??
-                    widget.show?.overview ??
-                    'No overview available'),
+              displayList(currentOption),
+              DescriptionCard(
+                  description: widget.movie?.overview ??
+                      widget.show?.overview ??
+                      'No overview available'),
 
-            displayCast(cast),
-// DescriptionCard(
-//   description: "Your description here",
-//   padding: EdgeInsets.all(16.0),
-//   textStyle: TextStyle(fontSize: 16, color: Colors.blue),
-// )
+              displayCast(cast),
+              // DescriptionCard(
+              //   description: "Your description here",
+              //   padding: EdgeInsets.all(16.0),
+              //   textStyle: TextStyle(fontSize: 16, color: Colors.blue),
+              // )
 
-// Get the cast
-          ],
+              // Get the cast
+            ],
+          ),
         ),
       );
     }
+  }
+
+  Widget displayImages(List<MovieImage> movieImages) {
+    return (SizedBox(
+      child: CarouselSlider.builder(
+        options: CarouselOptions(
+            autoPlay: true,
+            autoPlayAnimationDuration: const Duration(milliseconds: 1500),
+            autoPlayInterval: const Duration(seconds: 4),
+            autoPlayCurve: Curves.ease,
+            //autoPlayCurve: Curves.easeInToLinear,
+            //autoPlayCurve: Curves.linearToEaseOut,
+            aspectRatio: movieImages[0].aspectRatio,
+            viewportFraction: 0.9),
+        itemCount: movieImages.length,
+        itemBuilder: (context, index, realIndex) {
+          String path =
+              "https://image.tmdb.org/t/p/original${movieImages[index].filePath}";
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 20.0),
+            clipBehavior: Clip.antiAlias,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(28.0)),
+              shape: BoxShape.rectangle,
+            ),
+            child: CachedNetworkImage(
+              placeholder: (context, url) => Container(
+                margin: const EdgeInsets.symmetric(vertical: 20.0),
+                //width: width - 10,
+                height: 2000,
+                decoration: const BoxDecoration(
+                  color: Colors.transparent, // Placeholder color
+                  borderRadius: BorderRadius.all(Radius.circular(28.0)),
+                ),
+              ),
+              fadeOutDuration: const Duration(milliseconds: 150),
+              imageUrl: path,
+              errorWidget: (context, posterUrl, error) => const Icon(
+                Icons.no_photography_outlined,
+                size: 50,
+              ),
+            ),
+          );
+        },
+      ),
+    ));
   }
 
   // providerType needs to be
