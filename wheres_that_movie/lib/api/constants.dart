@@ -14,6 +14,7 @@ class ApiEndPoint {
   late String getShowProvidersByShowID;
   late String searchMovieShowPerson;
   late String getCastByMovieId;
+  late String getCastByShowId;
   late String getMovieImages;
 
   // * Genre Docs: https://developer.themoviedb.org/reference/genre-movie-list
@@ -70,6 +71,8 @@ class ApiEndPoint {
     getCountries = '$baseUrlPath/configuration/countries?language=en-US';
 
     getCastByMovieId = '$baseUrlPath/movie/$id/credits?language=en-US';
+
+    getCastByShowId = '$baseUrlPath/tv/$id/credits?language=en-US';
     getMovieImages = '$baseUrlPath/movie/$id/images';
   }
 }

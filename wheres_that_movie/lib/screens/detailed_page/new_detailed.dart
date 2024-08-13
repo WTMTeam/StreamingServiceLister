@@ -100,8 +100,14 @@ class _NewDetailedState extends State<NewDetailed> {
     });
   }
 
-  getShowCastList(int id) {
-    print("Show Id: $id");
+  getShowCastList(int id) async {
+    var castList = await CastService().getCastByShowId(
+      showId: id,
+    );
+
+    setState(() {
+      cast = castList;
+    });
   }
 
   getMovieImages(int id) async {

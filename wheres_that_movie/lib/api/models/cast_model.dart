@@ -66,6 +66,19 @@ class CastMember {
         creditId: json['credit_id'] ?? 'Unknown',
         order: json['order'] ?? 0,
       );
+// {
+//       "adult": false,
+//       "gender": 2,
+//       "id": 17419,
+//       "known_for_department": "acting",
+//       "name": "bryan cranston",
+//       "original_name": "bryan cranston",
+//       "popularity": 53.313,
+//       "profile_path": "/knytxgkisp8w4gs60hf7uoxznwn.jpg",
+//       "character": "walter white",
+//       "credit_id": "52542282760ee313280017f9",
+//       "order": 0
+//     },
       return CastMember(
         isAdult: json['adult'],
         gender: json['gender'],
@@ -116,6 +129,29 @@ class CastService {
     } catch (error) {
       print("Error getting cast: $error");
       throw Exception('Failed Getting Cast');
+    }
+  }
+
+  Future<List<CastMember>> getCastByShowId({int showId = 0}) async {
+    try {
+      var response = await http.get(
+          Uri.parse(ApiEndPoint(id: showId).getCastByShowId),
+          headers: headers);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List<CastMember> cast = [];
+        for (var castMember in data["cast"]) {
+          cast.add(CastMember.fromJson(castMember));
+        }
+        return cast;
+      } else {
+        throw Exception(
+            'HTTP FAILED getting cast with status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print("Error getting show cast: $error");
+      throw Exception("Failed Getting Cast");
     }
   }
 }
