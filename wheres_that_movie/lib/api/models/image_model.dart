@@ -88,6 +88,46 @@ class ImageService {
     //imageList.sort((a, b) => b.voteAverage.compareTo(a.voteAverage));
     return imageList;
   }
+
+  Future<List<MovieImage>> getShowImagesByType(
+      {required ImageType imagetype, required int showId}) async {
+    print("here $imagetype");
+
+    List<MovieImage> imageList = [];
+    String imageTypeString;
+    switch (imagetype) {
+      case ImageType.backdrops:
+        imageTypeString = "backdrops";
+        break;
+      case ImageType.posters:
+        imageTypeString = "posters";
+        break;
+      case ImageType.logos:
+        imageTypeString = "logos";
+        break;
+
+      default:
+        imageTypeString = "backdrops";
+    }
+    // todo: swap url to movieimageurl
+    var response = await http.get(
+        Uri.parse(ApiEndPoint(id: showId).getShowImages),
+        headers: headers);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final imageJson = data[imageTypeString];
+      try {
+        for (int i = 0; i < imageJson.length; i++) {
+          imageList.add(MovieImage.fromJson(imageJson[i]));
+        }
+      } catch (error) {
+        print("Error adding image to imagelist");
+      }
+    }
+    //imageList.sort((a, b) => b.voteAverage.compareTo(a.voteAverage));
+    return imageList;
+  }
 } 
 
 // backdrops: [

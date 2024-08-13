@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:wheres_that_movie/api/constants.dart';
 import 'package:wheres_that_movie/api/models/genre_model.dart';
@@ -29,36 +27,36 @@ class Movie {
     try {
       String backdropPath = "";
       String posterPath = "";
-      if (json['backdrop_path'] != null ) {
+      if (json['backdrop_path'] != null) {
         backdropPath = json['backdrop_path'];
-      } 
-
-      if (json['poster_path'] != null ) {
-        posterPath = json['poster_path']; 
       }
 
-    return Movie(
-      movieID: json['id'],
-      genreIDs: json['genre_ids'],
-      title: json['title'],
-      overview: json['overview'],
-      posterPath: posterPath,
-      backdropPath: backdropPath,
-      rating: json['vote_average'],
-    );
+      if (json['poster_path'] != null) {
+        posterPath = json['poster_path'];
+      }
+
+      return Movie(
+        movieID: json['id'],
+        genreIDs: json['genre_ids'],
+        title: json['title'],
+        overview: json['overview'],
+        posterPath: posterPath,
+        backdropPath: backdropPath,
+        rating: json['vote_average'],
+      );
     } catch (error) {
-    print("error $json");
+      print("error $json");
       print(error);
-    return const Movie(
-      movieID: 0000,
-      genreIDs: [0,0,0],
-      title: "ERROR",
-      overview: "ERROR",
-      posterPath: "ERROR",
-      backdropPath: "ERROR",
-      rating: 0.0,
-    );
-  }
+      return const Movie(
+        movieID: 0000,
+        genreIDs: [0, 0, 0],
+        title: "ERROR",
+        overview: "ERROR",
+        posterPath: "ERROR",
+        backdropPath: "ERROR",
+        rating: 0.0,
+      );
+    }
   }
 }
 

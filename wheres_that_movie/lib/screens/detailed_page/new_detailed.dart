@@ -29,6 +29,7 @@ class _NewDetailedState extends State<NewDetailed> {
   List<Provider> currentProviders = [];
   List<CastMember> cast = [];
   List<MovieImage> movieImages = [];
+  List<MovieImage> showImages = [];
   //List<Person> castPersonList = [];
   //List<CastMember> castMemebers = [];
   List<int> castIds = [];
@@ -119,6 +120,15 @@ class _NewDetailedState extends State<NewDetailed> {
     });
   }
 
+  getShowImages(int id) async {
+    var imageList = await ImageService()
+        .getShowImagesByType(imagetype: ImageType.backdrops, showId: id);
+
+    setState(() {
+      showImages = imageList;
+    });
+  }
+
   getMyList({Movie? movie, Show? show}) async {
     int id = 0;
 
@@ -192,6 +202,7 @@ class _NewDetailedState extends State<NewDetailed> {
       getMovieImages(widget.movie!.movieID);
     } else if (widget.show != null) {
       getShowCastList(widget.show!.showID);
+      getShowImages(widget.show!.showID);
     }
 
     super.initState();
@@ -322,6 +333,7 @@ class _NewDetailedState extends State<NewDetailed> {
               movieImages.isEmpty
                   ? const SizedBox()
                   : displayImages(movieImages),
+              showImages.isEmpty ? const SizedBox() : displayImages(showImages),
               Row(
                 children: [
                   Padding(

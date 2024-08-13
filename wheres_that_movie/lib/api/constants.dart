@@ -16,6 +16,7 @@ class ApiEndPoint {
   late String getCastByMovieId;
   late String getCastByShowId;
   late String getMovieImages;
+  late String getShowImages;
 
   // * Genre Docs: https://developer.themoviedb.org/reference/genre-movie-list
 
@@ -74,6 +75,7 @@ class ApiEndPoint {
 
     getCastByShowId = '$baseUrlPath/tv/$id/credits?language=en-US';
     getMovieImages = '$baseUrlPath/movie/$id/images';
+    getShowImages = '$baseUrlPath/tv/$id/images';
   }
 }
 
