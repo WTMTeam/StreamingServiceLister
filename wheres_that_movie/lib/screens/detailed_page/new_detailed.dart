@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wheres_that_movie/api/models/cast_model.dart';
 import 'package:wheres_that_movie/api/models/image_model.dart';
@@ -151,36 +152,8 @@ class _NewDetailedState extends State<NewDetailed> {
     String posterPath = movie != null ? movie.posterPath : show!.posterPath;
 
     await SQLHelper.createItem(id, title, posterPath, isMovieInt);
-    setState(() {
-      getMyList();
-    });
+    getMyList(movie: movie, show: show);
   }
-
-  // Insert a new movie or show to the database
-  // Future<void> _addItem({Movie? movie, Show? show}) async {
-  //   //int movieId, String movieTitle, String moviePath, bool isMovie) async {
-  //   int isMovieInt = 0;
-  //   if (movie != null) {
-  //     isMovieInt = 1;
-  //   }
-  //   if (movie != null) {
-  //     int id = movie.movieID;
-  //     String title = movie.title;
-  //     String posterPath = movie.posterPath;
-  //     await SQLHelper.createItem(id, title, posterPath, isMovieInt);
-  //     setState(() {
-  //       getMyList(movie: movie);
-  //     });
-  //   } else if (show != null) {
-  //     int id = show.showID;
-  //     String title = show.title;
-  //     String posterPath = show.posterPath;
-  //     await SQLHelper.createItem(id, title, posterPath, isMovieInt);
-  //     setState(() {
-  //       getMyList();
-  //     });
-  //   }
-  // }
 
   void _deleteItem(int movieOrShowId) async {
     List<Map<String, dynamic>> currItem =
@@ -207,8 +180,6 @@ class _NewDetailedState extends State<NewDetailed> {
 
     super.initState();
   }
-
-  final ScrollController _myController = ScrollController();
 
   void openApp(String scheme, String title) async {
     Uri appScheme = Uri.parse(scheme);
@@ -277,8 +248,21 @@ class _NewDetailedState extends State<NewDetailed> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       print("loading new detailed");
-      return const Scaffold(
-        body: Column(
+      return Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(
+              // Icons.arrow_back_ios,
+              //CupertinoIcons.arrow_down_right_arrow_up_left,
+              CupertinoIcons.fullscreen_exit,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ),
+        body: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
@@ -290,11 +274,15 @@ class _NewDetailedState extends State<NewDetailed> {
       );
     } else {
       String title = "Missing Title";
+      int id = 0;
 
       if (widget.movie != null) {
         title = widget.movie!.title;
+        id = widget.movie!.movieID;
+        print('Movie Info: ${widget.movie!.posterPath}');
       } else if (widget.show != null) {
         title = widget.show!.title;
+        id = widget.show!.showID;
       }
 
       return Scaffold(
@@ -325,6 +313,25 @@ class _NewDetailedState extends State<NewDetailed> {
           surfaceTintColor: Colors.transparent,
           shadowColor: Theme.of(context).colorScheme.secondary,
           elevation: 10.0,
+          actions: [
+            IconButton(
+              onPressed: () {
+                if (itemInMyList) {
+                  _deleteItem(id);
+                } else {
+                  widget.movie != null
+                      ? _addItem(movie: widget.movie)
+                      : _addItem(show: widget.show);
+                }
+              },
+              icon: Icon(
+                  itemInMyList
+                      ? CupertinoIcons.delete
+                      : CupertinoIcons.add_circled,
+                  size: 32,
+                  color: Theme.of(context).primaryColor),
+            ),
+          ],
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -476,6 +483,11 @@ class _NewDetailedState extends State<NewDetailed> {
         scrollDirection: Axis.horizontal,
         itemBuilder: ((context, index) {
           Provider provider = allProviders[providerType]![index];
+
+          bool missingPath = provider.logoPath.isEmpty;
+          if (!missingPath) {
+            print("Missing a Provider logo path");
+          }
           String providerImageUrl =
               "https://image.tmdb.org/t/p/w92${provider.logoPath}";
 
@@ -523,16 +535,54 @@ class _NewDetailedState extends State<NewDetailed> {
         scrollDirection: Axis.horizontal,
         itemBuilder: ((context, index) {
           CastMember castMember = cast[index];
-          String profilePath =
-              "https://image.tmdb.org/t/p/w92${castMember.profilePath}";
+          if (castMember.profilePath.length < 10) {
+            print(castMember.name);
+          }
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
-            child: InkWell(
-              onTap: () {
-                // Go to person page
-              },
+          bool missingPath = castMember.profilePath.isEmpty;
+
+          if (!missingPath) {
+            String profilePath =
+                "https://image.tmdb.org/t/p/w92${castMember.profilePath}";
+
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
+              child: InkWell(
+                onTap: () {
+                  // Go to person page
+                },
+                child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(12.0),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5), // Shadow color
+                        spreadRadius: 2, // Spread radius
+                        blurRadius: 5, // Blur radius
+                        offset: const Offset(
+                            1, 2), // Offset from the top left corner
+                      ),
+                    ],
+                  ),
+                  child: CachedNetworkImage(
+                    imageUrl: profilePath,
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                    fit: BoxFit.fill,
+                  ),
+                ),
+              ),
+            );
+          } else {
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
               child: Container(
+                width: 50.0,
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(
@@ -548,14 +598,11 @@ class _NewDetailedState extends State<NewDetailed> {
                     ),
                   ],
                 ),
-                child: CachedNetworkImage(
-                  imageUrl: profilePath,
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                  fit: BoxFit.fill,
-                ),
+                // TODO: add names?
+                child: const Icon(Icons.error),
               ),
-            ),
-          );
+            );
+          }
         }),
       ),
     ));

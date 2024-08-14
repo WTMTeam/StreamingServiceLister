@@ -314,6 +314,7 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                                 viewportFraction: getViewportFraction(context)),
                             itemCount: showsAndMovies.length,
                             itemBuilder: (context, index, realIndex) {
+                              // TODO: check if posterPath is empty to avoid error
                               Movie? movie;
                               Show? show;
                               String isMovie = "";
@@ -321,13 +322,23 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                               if (showsAndMovies[index] is Movie) {
                                 isMovie = "true";
                                 movie = showsAndMovies[index];
+                                if (movie!.posterPath.length < 10) {
+                                  print("error here");
+                                  print(movie.title);
+                                  print(movie.posterPath);
+                                }
                                 posterUrl =
-                                    "https://image.tmdb.org/t/p/w300${movie!.posterPath}";
+                                    "https://image.tmdb.org/t/p/w300${movie.posterPath}";
                               } else if (showsAndMovies[index] is Show) {
                                 isMovie = "false";
                                 show = showsAndMovies[index];
+                                if (show!.posterPath.length < 10) {
+                                  print("error here");
+                                  print(show.title);
+                                  print(show.posterPath);
+                                }
                                 posterUrl =
-                                    "https://image.tmdb.org/t/p/w300${show!.posterPath}";
+                                    "https://image.tmdb.org/t/p/w300${show.posterPath}";
                               } else {
                                 print("whuuuut");
                               }
@@ -353,11 +364,22 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                                   child: CachedNetworkImage(
                                     imageUrl: posterUrl,
                                     width: 500,
-                                    errorWidget: (context, posterUrl, error) =>
-                                        const Icon(
-                                      Icons.no_photography_outlined,
-                                      size: 50,
-                                    ),
+                                    errorWidget: (context, url, error) {
+                                      if (mounted) {
+                                        return const Icon(
+                                          Icons.no_photography_outlined,
+                                          size: 50,
+                                        );
+                                      } else {
+                                        return const SizedBox
+                                            .shrink(); // Return an empty widget if not mounted
+                                      }
+                                    },
+                                    // errorWidget: (context, posterUrl, error) =>
+                                    //     const Icon(
+                                    //   Icons.no_photography_outlined,
+                                    //   size: 50,
+                                    // ),
                                   ),
                                 ),
                               );
