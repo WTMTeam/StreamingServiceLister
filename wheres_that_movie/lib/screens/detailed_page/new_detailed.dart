@@ -15,6 +15,7 @@ import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/database/database_helper.dart';
 import 'package:wheres_that_movie/screens/detailed_page/local_widgets/display_description.dart';
 import 'package:wheres_that_movie/screens/detailed_page/local_widgets/options_modal.dart';
+import 'package:wheres_that_movie/widgets/country_dropdown.dart';
 
 class NewDetailed extends StatefulWidget {
   final Movie? movie;
@@ -47,13 +48,14 @@ class _NewDetailedState extends State<NewDetailed> {
   ];
 
   String currentOption = "Stream";
-  String countryCode = "US";
+  String countryCode = "";
 
   bool _isLoading = false;
   bool itemInMyList = false;
 
   getProviders(String currentOption, String countryCode,
       {Movie? movie, Show? show}) async {
+    print("Country Code: $countryCode");
     _isLoading = true;
     try {
       int id;
@@ -374,6 +376,21 @@ class _NewDetailedState extends State<NewDetailed> {
                   ),
                 ],
               ),
+
+              Container(
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 15.0,
+                    horizontal: 10.0,
+                  ),
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(50.0)),
+                  child: CountryDropdown(
+                    onChanged: (code) {
+                      countryCode = code;
+                      getProviders(currentOption, countryCode,
+                          movie: widget.movie, show: widget.show);
+                    },
+                  )),
               displayList(currentOption),
               DescriptionCard(
                   description: widget.movie?.overview ??
