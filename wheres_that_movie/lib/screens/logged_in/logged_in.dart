@@ -314,6 +314,7 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                                 viewportFraction: getViewportFraction(context)),
                             itemCount: showsAndMovies.length,
                             itemBuilder: (context, index, realIndex) {
+                              bool missingPath = true;
                               // TODO: check if posterPath is empty to avoid error
                               Movie? movie;
                               Show? show;
@@ -322,67 +323,80 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                               if (showsAndMovies[index] is Movie) {
                                 isMovie = "true";
                                 movie = showsAndMovies[index];
-                                if (movie!.posterPath.length < 10) {
-                                  print("error here");
-                                  print(movie.title);
-                                  print(movie.posterPath);
+                                if (!movie!.posterPath.isEmpty) {
+                                  missingPath = false;
                                 }
                                 posterUrl =
                                     "https://image.tmdb.org/t/p/w300${movie.posterPath}";
                               } else if (showsAndMovies[index] is Show) {
                                 isMovie = "false";
                                 show = showsAndMovies[index];
-                                if (show!.posterPath.length < 10) {
-                                  print("error here");
-                                  print(show.title);
-                                  print(show.posterPath);
+                                if (!show!.posterPath.isEmpty) {
+                                  missingPath = false;
                                 }
                                 posterUrl =
                                     "https://image.tmdb.org/t/p/w300${show.posterPath}";
                               } else {
                                 print("whuuuut");
                               }
-                              return InkWell(
-                                onTap: () {
-                                  if (isMovie == "true") {
-                                    Get.to(() => NewDetailed(movie: movie),
-                                        transition: Transition.zoom);
-                                  } else if (isMovie == "false") {
-                                    Get.to(() => NewDetailed(show: show),
-                                        transition: Transition.zoom);
-                                  }
-                                },
-                                child: Container(
-                                  height: 450,
-                                  width: 300,
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: const BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8.0)),
-                                    shape: BoxShape.rectangle,
+
+                              if (!missingPath) {
+                                return InkWell(
+                                  onTap: () {
+                                    if (isMovie == "true") {
+                                      Get.to(() => NewDetailed(movie: movie),
+                                          transition: Transition.zoom);
+                                    } else if (isMovie == "false") {
+                                      Get.to(() => NewDetailed(show: show),
+                                          transition: Transition.zoom);
+                                    }
+                                  },
+                                  child: Container(
+                                    height: 450,
+                                    width: 300,
+                                    clipBehavior: Clip.antiAlias,
+                                    decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(8.0)),
+                                      shape: BoxShape.rectangle,
+                                    ),
+                                    child: CachedNetworkImage(
+                                      imageUrl: posterUrl,
+                                      width: 500,
+                                      errorWidget:
+                                          (context, posterUrl, error) =>
+                                              const Icon(
+                                        Icons.no_photography_outlined,
+                                        size: 50,
+                                      ),
+                                    ),
                                   ),
-                                  child: CachedNetworkImage(
-                                    imageUrl: posterUrl,
-                                    width: 500,
-                                    errorWidget: (context, url, error) {
-                                      if (mounted) {
-                                        return const Icon(
-                                          Icons.no_photography_outlined,
-                                          size: 50,
-                                        );
-                                      } else {
-                                        return const SizedBox
-                                            .shrink(); // Return an empty widget if not mounted
+                                );
+                              } else {
+                                return InkWell(
+                                    onTap: () {
+                                      if (isMovie == "true") {
+                                        Get.to(() => NewDetailed(movie: movie),
+                                            transition: Transition.zoom);
+                                      } else if (isMovie == "false") {
+                                        Get.to(() => NewDetailed(show: show),
+                                            transition: Transition.zoom);
                                       }
                                     },
-                                    // errorWidget: (context, posterUrl, error) =>
-                                    //     const Icon(
-                                    //   Icons.no_photography_outlined,
-                                    //   size: 50,
-                                    // ),
-                                  ),
-                                ),
-                              );
+                                    child: Container(
+                                        height: 450,
+                                        width: 300,
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(8.0)),
+                                          shape: BoxShape.rectangle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.no_photography_outlined,
+                                          size: 50,
+                                        )));
+                              }
                             },
                           ),
                         ),

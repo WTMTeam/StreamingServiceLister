@@ -485,7 +485,7 @@ class _NewDetailedState extends State<NewDetailed> {
           Provider provider = allProviders[providerType]![index];
 
           bool missingPath = provider.logoPath.isEmpty;
-          if (!missingPath) {
+          if (missingPath) {
             print("Missing a Provider logo path");
           }
           String providerImageUrl =
@@ -529,16 +529,12 @@ class _NewDetailedState extends State<NewDetailed> {
   Widget displayCast(List<CastMember> cast) {
     return (Container(
       margin: const EdgeInsets.only(bottom: 12.0, left: 5.0, right: 5.0),
-      height: 92.0,
+      height: 150.0,
       child: ListView.builder(
         itemCount: cast.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: ((context, index) {
           CastMember castMember = cast[index];
-          if (castMember.profilePath.length < 10) {
-            print(castMember.name);
-          }
-
           bool missingPath = castMember.profilePath.isEmpty;
 
           if (!missingPath) {
@@ -572,7 +568,6 @@ class _NewDetailedState extends State<NewDetailed> {
                     imageUrl: profilePath,
                     errorWidget: (context, url, error) =>
                         const Icon(Icons.error),
-                    fit: BoxFit.fill,
                   ),
                 ),
               ),
@@ -582,7 +577,7 @@ class _NewDetailedState extends State<NewDetailed> {
               padding:
                   const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
               child: Container(
-                width: 50.0,
+                width: 92.0,
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(
@@ -598,8 +593,13 @@ class _NewDetailedState extends State<NewDetailed> {
                     ),
                   ],
                 ),
-                // TODO: add names?
-                child: const Icon(Icons.error),
+                child: Center(
+                  child: Text(
+                    castMember.name.split(' ').join('\n'),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+                //child: const Icon(Icons.error),
               ),
             );
           }
