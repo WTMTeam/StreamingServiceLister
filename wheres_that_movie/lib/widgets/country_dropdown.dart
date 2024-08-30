@@ -91,7 +91,7 @@ class _CountryDropdownState extends State<CountryDropdown> {
         menuProps: MenuProps(
             borderRadius: BorderRadius.circular(10.0),
             backgroundColor: Theme.of(context).colorScheme.primaryContainer),
-        constraints: const BoxConstraints(maxHeight: 200),
+        constraints: const BoxConstraints(maxHeight: 400),
         itemBuilder: (context, item, isSelected) {
           return Container(
             padding:
