@@ -494,17 +494,13 @@ class _NewDetailedState extends State<NewDetailed> {
     }
     return (Container(
       margin: const EdgeInsets.only(bottom: 12.0, left: 5.0, right: 5.0),
-      height: 92.0,
+      height: 100.0,
       child: ListView.builder(
         itemCount: allProviders[providerType]!.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: ((context, index) {
           Provider provider = allProviders[providerType]![index];
 
-          bool missingPath = provider.logoPath.isEmpty;
-          if (missingPath) {
-            print("Missing a Provider logo path");
-          }
           String providerImageUrl =
               "https://image.tmdb.org/t/p/w92${provider.logoPath}";
 
@@ -533,7 +529,6 @@ class _NewDetailedState extends State<NewDetailed> {
                 child: CachedNetworkImage(
                   imageUrl: providerImageUrl,
                   errorWidget: (context, url, error) => const Icon(Icons.error),
-                  fit: BoxFit.fill,
                 ),
               ),
             ),

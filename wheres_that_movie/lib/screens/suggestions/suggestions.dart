@@ -26,6 +26,7 @@ import 'package:wheres_that_movie/api/models/movie_model.dart';
 import 'package:wheres_that_movie/api/models/genre_model.dart';
 import 'package:wheres_that_movie/api/models/provider_model.dart';
 import 'package:wheres_that_movie/screens/detailed_page/detailed.dart';
+import 'package:wheres_that_movie/screens/detailed_page/new_detailed.dart';
 import 'package:wheres_that_movie/screens/suggestions/options_dialog.dart';
 import 'package:wheres_that_movie/widgets/country_dropdown.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -188,7 +189,6 @@ class _SuggestionsState extends State<Suggestions> {
                   child: CountryDropdown(
                     onChanged: (code) {
                       countryCode = code;
-                      print("Code: $code");
                     },
                   ),
                 ),
@@ -352,11 +352,7 @@ class _SuggestionsState extends State<Suggestions> {
                         children: currentProviders!
                             .map(
                               (provider) => ElevatedButton(
-                                onPressed: () {
-                                  print(provider.providerName);
-                                  print(
-                                      "PRovider select all: $providerSelectAll");
-                                },
+                                onPressed: () {},
                                 style: ElevatedButton.styleFrom(
                                     minimumSize: const Size(100, 40),
                                     shape: RoundedRectangleBorder(
@@ -397,9 +393,7 @@ class _SuggestionsState extends State<Suggestions> {
                         children: currentGenres!
                             .map(
                               (genre) => ElevatedButton(
-                                onPressed: () {
-                                  print(genre.genreName);
-                                },
+                                onPressed: () {},
                                 style: ElevatedButton.styleFrom(
                                     minimumSize: const Size(100, 40),
                                     shape: RoundedRectangleBorder(
@@ -453,7 +447,6 @@ class _SuggestionsState extends State<Suggestions> {
                       });
                     } catch (error) {
                       // Handle errors if any
-                      print("Error fetching movie suggestions: $error");
                     }
                   },
                 ),
@@ -471,7 +464,6 @@ class _SuggestionsState extends State<Suggestions> {
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return const Center(child: Text(""));
                       } else {
-                        //print("Snapshot: ${snapshot.data.length}");
 // After loading your content, scroll to a specific position
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           double maxScrollOffset =
@@ -497,16 +489,20 @@ class _SuggestionsState extends State<Suggestions> {
                                 "https://image.tmdb.org/t/p/w300${movie.posterPath}";
                             return InkWell(
                               onTap: () {
-                                Get.to(
-                                    () => DetailedPage(
-                                        id: movie.movieID, isMovie: true),
+                                Get.to(() => NewDetailed(movie: movie),
                                     transition: Transition.zoom);
-                                // Navigator.of(context).push(
-                                //   MaterialPageRoute(
-                                //     builder: (context) => DetailedPage(
-                                //         id: movie.movieID, isMovie: true),
-                                //   ),
-                                // );
+                                // if (isMovie == "true") {
+                                //   Get.to(() => NewDetailed(movie: movie),
+                                //       transition: Transition.zoom);
+                                // } else if (isMovie == "false") {
+                                //   Get.to(() => NewDetailed(show: show),
+                                //       transition: Transition.zoom);
+                                // }
+
+                                // () => DetailedPage(
+                                //     id: movie.movieID, isMovie: true),
+                                // transition: Transition.zoom);
+                                //
                               },
                               child: Container(
                                 height: 450,

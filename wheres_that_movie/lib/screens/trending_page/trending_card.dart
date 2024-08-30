@@ -69,6 +69,13 @@ class CarouselCard extends StatelessWidget {
         onTap: () {
           Get.to(() => DetailedPage(id: id, isMovie: isMovie),
               transition: Transition.zoom);
+          // if (isMovie == "true") {
+          //   Get.to(() => NewDetailed(movie: movie),
+          //       transition: Transition.zoom);
+          // } else if (isMovie == "false") {
+          //   Get.to(() => NewDetailed(show: show),
+          //       transition: Transition.zoom);
+          // }
         },
         child: Container(
           decoration: ShapeDecoration(
