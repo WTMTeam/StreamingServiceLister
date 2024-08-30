@@ -1,22 +1,23 @@
-//
-//
-//
-//
-
 class ApiEndPoint {
+  late String getMovieStreamingProviderInfoRegion;
+  late String getMovieStreamingProviderInfo;
+  late String getMovieProvidersByMovieID;
   late String getMovieSuggestions;
   late String getMovieGenresUrl;
-  late String getTvShowGenresUrl;
-  late String getMovieStreamingProviderInfo;
-  late String getMovieStreamingProviderInfoRegion;
-  late String getCountries;
-  late String getMovieProvidersByMovieID;
-  late String getShowProvidersByShowID;
-  late String searchMovieShowPerson;
+  late String getTrendingMovies;
   late String getCastByMovieId;
-  late String getCastByShowId;
   late String getMovieImages;
+
+  late String getShowProvidersByShowID;
+  late String getTvShowGenresUrl;
+  late String getTrendingShows;
+  late String getCastByShowId;
   late String getShowImages;
+
+  late String getTrendingPeople;
+
+  late String searchMovieShowPerson;
+  late String getCountries;
 
   // * Genre Docs: https://developer.themoviedb.org/reference/genre-movie-list
 
@@ -27,69 +28,49 @@ class ApiEndPoint {
       String? genreIDs,
       int? runtime,
       bool? runtimeLessThan,
-      String? region}) {
+      String? region,
+      String? timeWindow}) {
     //Value added for simplicity but it is always better
     //  to add it in a configuration file
     String baseUrlPath = 'https://api.themoviedb.org/3';
     region ??= "US";
-    genreIDs ??= ""; // Use pipe | for "or".
-    //genreIDs ??= "35|53"; // Use pipe | for "or".
+    genreIDs ??= "";
     providerIDs ??= "";
     runtime ??= 999;
-    //providerIDs ??= "8|9";
+    timeWindow ??= "week"; // can be day or week
 
-// with_watch_monetization_types
-// string
-// possible values are: [flatrate, free, ads, rent, buy] use in conjunction with watch_region, can be a comma (AND) or pipe (OR) separated query
+// can be a comma (AND) or pipe (OR) separated query
 
-    searchMovieShowPerson =
-        '$baseUrlPath/search/multi?query=$searchText&include_adult=false';
-
-    getMovieSuggestions =
-        '$baseUrlPath/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&watch_region=$region&with_genres=$genreIDs&with_watch_providers=$providerIDs&with_watch_monetization_types=flatrate|free|ads';
-
-    if (runtime != null) {
-      getMovieSuggestions += '&with_runtime.lte=$runtime';
-    }
-    // getMovieSuggestions =
-    // '$baseUrlPath/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&watch_region=$region&with_genres=$genreIDs&with_watch_providers=$providerIDs';
-
-    // discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&watch_region=US&with_genres=35&with_watch_providers=8
-
-    // Get the list of genres for movies or shows
-    getMovieGenresUrl = '$baseUrlPath/genre/movie/list?language=en';
-    getTvShowGenresUrl = '$baseUrlPath/genre/tv/list?language=en';
-
-    getMovieProvidersByMovieID = '$baseUrlPath/movie/$id/watch/providers';
-    getShowProvidersByShowID = '$baseUrlPath/tv/$id/watch/providers';
-    // Get the streaming provider information for movies
-    getMovieStreamingProviderInfo =
-        '$baseUrlPath/watch/providers/movie?language=en-US';
+// Movies
     getMovieStreamingProviderInfoRegion =
         '$baseUrlPath/watch/providers/movie?language=en-US&watch_region=US';
+    getMovieStreamingProviderInfo =
+        '$baseUrlPath/watch/providers/movie?language=en-US';
+    getMovieProvidersByMovieID = '$baseUrlPath/movie/$id/watch/providers';
+// check this
+    getMovieSuggestions =
+        '$baseUrlPath/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&watch_region=$region&with_genres=$genreIDs&with_watch_providers=$providerIDs&with_watch_monetization_types=flatrate|free|ads&with_runtime.lte=$runtime';
 
-    // Get the Countries used in TMDidB
-    getCountries = '$baseUrlPath/configuration/countries?language=en-US';
+    //getMovieSuggestions += '&with_runtime.lte=$runtime';
 
+    getMovieGenresUrl = '$baseUrlPath/genre/movie/list?language=en';
+    getTrendingMovies = '$baseUrlPath/trending/movie/$timeWindow';
     getCastByMovieId = '$baseUrlPath/movie/$id/credits?language=en-US';
-
-    getCastByShowId = '$baseUrlPath/tv/$id/credits?language=en-US';
     getMovieImages = '$baseUrlPath/movie/$id/images';
+
+// Shows
+    getShowProvidersByShowID = '$baseUrlPath/tv/$id/watch/providers';
+    getTvShowGenresUrl = '$baseUrlPath/genre/tv/list?language=en';
+    getTrendingShows = '$baseUrlPath/trending/tv/$timeWindow';
+    getCastByShowId = '$baseUrlPath/tv/$id/credits?language=en-US';
     getShowImages = '$baseUrlPath/tv/$id/images';
+
+// People
+    getTrendingPeople = '$baseUrlPath/trending/person/$timeWindow';
+
+// General
+    searchMovieShowPerson =
+        '$baseUrlPath/search/multi?query=$searchText&include_adult=false';
+    getCountries = '$baseUrlPath/configuration/countries?language=en-US';
   }
 }
-
-// * Use like this
-// Future<List<Film>> getAllFilms() async {
-//   var response = await http.get(
-//     Uri.parse(ApiEndPoint().FILM_ALL),
-//   );
-// // ...
-// }
-
-// Future<Film> getSingleFilm(int idFilm) async {
-//   var response = await http.get(
-//     Uri.parse(ApiEndPoint(id: idFilm).FILM_SINGLE),
-//   );
-//   //...
-// }
