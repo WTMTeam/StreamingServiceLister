@@ -61,6 +61,32 @@ class Movie {
 }
 
 class MovieService {
+  final Map<String, String> headers = {
+    'accept': 'application/json',
+    'Authorization':
+        'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmZmYTBkMTZmYjhkYzI4NzM1MzExNTZhNWM1ZjQxYSIsInN1YiI6IjYzODYzNzE0MDM5OGFiMDBjODM5MTJkOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qQjwnSQLDfVNAuinpsM-ATK400-dnwuWUVirc7_AiQY',
+  };
+  Future<List<Movie>> getTrendingMovies(String timeWindow) async {
+    var response = await http.get(
+        Uri.parse(ApiEndPoint(timeWindow: timeWindow).getTrendingMovies),
+        headers: headers);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      print("Data: $data");
+      final List<Movie> movieList = [];
+
+      for (var i = 0; i < data['results'].length; i++) {
+        final entry = data['results'][i];
+        movieList.add(Movie.fromJson(entry));
+      }
+      return movieList;
+    } else {
+      throw Exception(
+          'HTTP FAILED getting genres with status code: ${response.statusCode}');
+    }
+  }
+
   // Todo:
   // - Sort based on something
   // - Accept and send on provider data, genre data osv.
@@ -101,11 +127,6 @@ class MovieService {
 
     runtime ??= 999;
 
-    final Map<String, String> headers = {
-      'accept': 'application/json',
-      'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmZmYTBkMTZmYjhkYzI4NzM1MzExNTZhNWM1ZjQxYSIsInN1YiI6IjYzODYzNzE0MDM5OGFiMDBjODM5MTJkOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qQjwnSQLDfVNAuinpsM-ATK400-dnwuWUVirc7_AiQY',
-    };
     var response = await http.get(
         Uri.parse(ApiEndPoint(
           providerIDs: providerIDs,

@@ -15,6 +15,7 @@ import 'dart:math';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:tmdb_api/tmdb_api.dart';
+import 'package:wheres_that_movie/api/models/movie_model.dart';
 import 'package:wheres_that_movie/screens/trending_page/trending_appbar.dart';
 import 'package:wheres_that_movie/screens/trending_page/trending_card.dart';
 
@@ -28,10 +29,11 @@ class MyTrending extends StatefulWidget {
 }
 
 class _MyTrendingState extends State<MyTrending> {
-  final String apiKey = 'dbffa0d16fb8dc2873531156a5c5f41a';
-  final String readAccessToken =
-      'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmZmYTBkMTZmYjhkYzI4NzM1MzExNTZhNWM1ZjQxYSIsInN1YiI6IjYzODYzNzE0MDM5OGFiMDBjODM5MTJkOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qQjwnSQLDfVNAuinpsM-ATK400-dnwuWUVirc7_AiQY';
-  List trendingMovies = [];
+  // final String apiKey = 'dbffa0d16fb8dc2873531156a5c5f41a';
+  // final String readAccessToken =
+  //     'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmZmYTBkMTZmYjhkYzI4NzM1MzExNTZhNWM1ZjQxYSIsInN1YiI6IjYzODYzNzE0MDM5OGFiMDBjODM5MTJkOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qQjwnSQLDfVNAuinpsM-ATK400-dnwuWUVirc7_AiQY';
+  //List trendingMovies = [];
+  List<Movie> trendingMovies = [];
   List trendingTitles = [];
   List voteAverageMovie = [];
   List cards = [];
@@ -43,31 +45,34 @@ class _MyTrendingState extends State<MyTrending> {
 
   loadTrendingMovies() async {
     _isLoading = true;
-    final tmdbWithCustomLogs = TMDB(
-      //TMDB instance
-      ApiKeys(apiKey, readAccessToken), //ApiKeys instance with your keys,
-      logConfig: const ConfigLogger(
-        showLogs: true, //must be true than only all other logs will be shown
-        showErrorLogs: true,
-      ),
-    );
-    Map result = await tmdbWithCustomLogs.v3.trending.getTrending();
+    // final tmdbWithCustomLogs = TMDB(
+    //   //TMDB instance
+    //   ApiKeys(apiKey, readAccessToken), //ApiKeys instance with your keys,
+    //   logConfig: const ConfigLogger(
+    //     showLogs: true, //must be true than only all other logs will be shown
+    //     showErrorLogs: true,
+    //   ),
+    // );
+    //Map result = await tmdbWithCustomLogs.v3.trending.getTrending();
+    String timeWindow = "week";
+
+    trendingMovies = await MovieService().getTrendingMovies(timeWindow);
 
     setState(() {
-      trendingMovies = result['results'];
+      //trendingMovies = result['results'];
     });
-    for (int i = 0; i < 10; i++) {
-      try {
-        // if title returns null, then try name instead
-        String title = trendingMovies[i]["title"] ?? trendingMovies[i]['name'];
-
-        double vote = trendingMovies[i]["vote_average"];
-        trendingTitles.add(title);
-        voteAverageMovie.add(vote);
-      } catch (e) {
-        // Print error message
-      }
-    }
+    // for (int i = 0; i < 10; i++) {
+    //   try {
+    //     // if title returns null, then try name instead
+    //     String title = trendingMovies[i]["title"] ?? trendingMovies[i]['name'];
+    //
+    //     double vote = trendingMovies[i]["vote_average"];
+    //     trendingTitles.add(title);
+    //     voteAverageMovie.add(vote);
+    //   } catch (e) {
+    //     // Print error message
+    //   }
+    // }
     makeCardList();
   }
 
@@ -77,28 +82,9 @@ class _MyTrendingState extends State<MyTrending> {
     List newCards = [];
     for (int i = 0; i < 10; i++) {
       try {
-        // if title returns null, then try name instead
-        String title = trendingMovies[i]["title"] ?? trendingMovies[i]['name'];
-        String imgUrl =
-            "https://image.tmdb.org/t/p/w500${trendingMovies[i]['poster_path']}";
-        String overview = trendingMovies[i]['overview'];
-        double vote = trendingMovies[i]["vote_average"];
-        int id = trendingMovies[i]["id"];
-        String mediaType = trendingMovies[i]["media_type"];
-        bool isMovie = false;
-        if (mediaType == "movie") {
-          isMovie = true;
-        }
-
-        // Add the current card to the list of new cards
         newCards.add(CarouselCard(
-          id: id,
-          imgUrl: imgUrl,
-          title: title,
-          overview: overview,
-          rating: vote,
+          movie: trendingMovies[i],
           isHorizontal: isHorizontal,
-          isMovie: isMovie,
         ));
         setState(() {
           cards = newCards;

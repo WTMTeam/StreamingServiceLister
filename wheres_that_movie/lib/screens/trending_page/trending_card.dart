@@ -14,29 +14,41 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:wheres_that_movie/api/models/movie_model.dart';
+import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/screens/detailed_page/detailed.dart';
+import 'package:wheres_that_movie/screens/detailed_page/new_detailed.dart';
 
 class CarouselCard extends StatelessWidget {
-  final String imgUrl;
-  final String title;
-  final String overview;
-  final double rating;
+  // final String imgUrl;
+  // final String title;
+  // final String overview;
+  // final double rating;
+  // final int id;
+  // final bool isMovie;
+  //
+  // const CarouselCard({
+  //   super.key,
+  //   required this.id,
+  //   required this.imgUrl,
+  //   required this.title,
+  //   required this.overview,
+  //   required this.rating,
+  //   required this.isMovie,
+  // });
+  final Movie? movie;
+  final Show? show;
   final bool isHorizontal;
-  final int id;
-  final bool isMovie;
-
   const CarouselCard({
     super.key,
-    required this.id,
-    required this.imgUrl,
-    required this.title,
-    required this.overview,
-    required this.rating,
+    this.movie,
+    this.show,
     required this.isHorizontal,
-    required this.isMovie,
   });
 
   Widget myRatingBar() {
+    num rating = (movie?.rating ?? show?.rating) ?? 0;
+
     return RatingBar(
       onRatingUpdate: (value) => rating,
       initialRating: rating / 2,
@@ -59,22 +71,28 @@ class CarouselCard extends StatelessWidget {
     );
   }
 
-  // bool _isZoomed = false;
   @override
   Widget build(BuildContext context) {
-    // print(imgUrl);
+    bool isMovie = movie != null;
+    String title = movie?.title ?? show?.title ?? 'Unknown Title';
+    String imgUrl =
+        'https://image.tmdb.org/t/p/w500${movie?.posterPath ?? show?.posterPath ?? ''}';
     double screenWidth = MediaQuery.of(context).size.width;
     if (!isHorizontal) {
       return InkWell(
         onTap: () {
-          Get.to(() => DetailedPage(id: id, isMovie: isMovie),
+          Get.to(
+              () => NewDetailed(
+                    movie: movie,
+                    show: show,
+                  ),
               transition: Transition.zoom);
-          // if (isMovie == "true") {
+
+          // if (isMovie) {
           //   Get.to(() => NewDetailed(movie: movie),
           //       transition: Transition.zoom);
-          // } else if (isMovie == "false") {
-          //   Get.to(() => NewDetailed(show: show),
-          //       transition: Transition.zoom);
+          // } else if (isShow) {
+          //   Get.to(() => NewDetailed(show: show), transition: Transition.zoom);
           // }
         },
         child: Container(
@@ -142,7 +160,11 @@ class CarouselCard extends StatelessWidget {
     } else {
       return InkWell(
         onTap: () {
-          Get.to(() => DetailedPage(id: id, isMovie: isMovie),
+          Get.to(
+              () => NewDetailed(
+                    movie: movie,
+                    show: show,
+                  ),
               transition: Transition.zoom);
         },
         child: Container(
