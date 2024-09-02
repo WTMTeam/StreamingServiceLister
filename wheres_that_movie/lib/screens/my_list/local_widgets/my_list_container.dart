@@ -12,7 +12,11 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:wheres_that_movie/api/models/movie_model.dart';
+import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/screens/detailed_page/detailed.dart';
+import 'package:wheres_that_movie/screens/detailed_page/new_detailed.dart';
 import '../../../widgets/my_container.dart';
 
 class MyListContainer extends StatefulWidget {
@@ -74,23 +78,46 @@ class _MyListContainerState extends State<MyListContainer> {
                         widget.onRemoved(itemToRemove);
                       },
                       icon: const Icon(Icons.delete_outline)),
-                  onTap: () {
+                  onTap: () async {
                     bool isMovie = false;
                     if (widget.myList[index]['isMovie'] == 1) {
                       isMovie = true;
+                      print("movie ID: ${widget.myList[index]['movieId']}");
+                      Movie movie = await MovieService()
+                          .getMovieById(widget.myList[index]['movieId']);
+
+                      Get.to(
+                          () => NewDetailed(
+                                movie: movie,
+                              ),
+                          transition: Transition.zoom);
+                    } else {
+                      print("show ID: ${widget.myList[index]['movieId']}");
+                      Show show = await ShowService()
+                          .getShowById(widget.myList[index]['movieId']);
+                      Get.to(
+                          () => NewDetailed(
+                                show: show,
+                              ),
+                          transition: Transition.zoom);
+
+                      // Navigator.of(context)
+                      //     .push(
+                      //   MaterialPageRoute(
+                      //     builder: (context) => DetailedPage(
+                      //       id: widget.myList[index]['movieId'],
+                      //       isMovie: isMovie,
+                      //     ),
+                      // builder: (context) => DetailedPage(
+                      //   id: widget.myList[index]['movieId'],
+                      //   isMovie: isMovie,
+                      // ),
+                      //   ),
+                      // )
+                      //     .then((_) {
+                      //   widget.refreshList();
+                      //});
                     }
-                    Navigator.of(context)
-                        .push(
-                      MaterialPageRoute(
-                        builder: (context) => DetailedPage(
-                          id: widget.myList[index]['movieId'],
-                          isMovie: isMovie,
-                        ),
-                      ),
-                    )
-                        .then((_) {
-                      widget.refreshList();
-                    });
                   },
                 ),
               ),

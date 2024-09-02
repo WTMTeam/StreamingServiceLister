@@ -37,7 +37,7 @@ class Movie {
 
       return Movie(
         movieID: json['id'],
-        genreIDs: json['genre_ids'],
+        genreIDs: json['genre_ids'] ?? json['genres'],
         title: json['title'],
         overview: json['overview'],
         posterPath: posterPath,
@@ -45,8 +45,7 @@ class Movie {
         rating: json['vote_average'],
       );
     } catch (error) {
-      print("error $json");
-      print(error);
+      print('error in movie: $error');
       return const Movie(
         movieID: 0000,
         genreIDs: [0, 0, 0],
@@ -66,6 +65,22 @@ class MovieService {
     'Authorization':
         'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmZmYTBkMTZmYjhkYzI4NzM1MzExNTZhNWM1ZjQxYSIsInN1YiI6IjYzODYzNzE0MDM5OGFiMDBjODM5MTJkOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qQjwnSQLDfVNAuinpsM-ATK400-dnwuWUVirc7_AiQY',
   };
+
+  Future<Movie> getMovieById(int id) async {
+    var response = await http.get(
+        Uri.parse(ApiEndPoint(id: id).getMovieByMovieId),
+        headers: headers);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      return Movie.fromJson(data);
+    } else {
+      throw Exception(
+          'HTTP FAILED getting genres with status code: ${response.statusCode}');
+    }
+  }
+
   Future<List<Movie>> getTrendingMovies(String timeWindow) async {
     var response = await http.get(
         Uri.parse(ApiEndPoint(timeWindow: timeWindow).getTrendingMovies),

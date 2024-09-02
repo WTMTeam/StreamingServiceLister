@@ -110,7 +110,6 @@ class _MyLoggedInState extends State<MyLoggedIn> {
       }
 
       final data = jsonDecode(response.body);
-      print(data);
       Map result = data;
 
       setState(() {

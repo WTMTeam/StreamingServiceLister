@@ -4,6 +4,7 @@ class ApiEndPoint {
   late String getMovieProvidersByMovieID;
   late String getMovieSuggestions;
   late String getMovieGenresUrl;
+  late String getMovieByMovieId;
   late String getTrendingMovies;
   late String getCastByMovieId;
   late String getMovieImages;
@@ -11,6 +12,7 @@ class ApiEndPoint {
   late String getShowProvidersByShowID;
   late String getTvShowGenresUrl;
   late String getTrendingShows;
+  late String getShowByShowId;
   late String getCastByShowId;
   late String getShowImages;
 
@@ -54,6 +56,7 @@ class ApiEndPoint {
     //getMovieSuggestions += '&with_runtime.lte=$runtime';
 
     getMovieGenresUrl = '$baseUrlPath/genre/movie/list?language=en';
+    getMovieByMovieId = '$baseUrlPath/movie/$id';
     getTrendingMovies = '$baseUrlPath/trending/movie/$timeWindow';
     getCastByMovieId = '$baseUrlPath/movie/$id/credits?language=en-US';
     getMovieImages = '$baseUrlPath/movie/$id/images';
@@ -62,6 +65,7 @@ class ApiEndPoint {
     getShowProvidersByShowID = '$baseUrlPath/tv/$id/watch/providers';
     getTvShowGenresUrl = '$baseUrlPath/genre/tv/list?language=en';
     getTrendingShows = '$baseUrlPath/trending/tv/$timeWindow';
+    getShowByShowId = '$baseUrlPath/tv/$id';
     getCastByShowId = '$baseUrlPath/tv/$id/credits?language=en-US';
     getShowImages = '$baseUrlPath/tv/$id/images';
 

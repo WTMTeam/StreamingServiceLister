@@ -249,7 +249,6 @@ class _NewDetailedState extends State<NewDetailed> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      print("loading new detailed");
       return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -281,7 +280,6 @@ class _NewDetailedState extends State<NewDetailed> {
       if (widget.movie != null) {
         title = widget.movie!.title;
         id = widget.movie!.movieID;
-        print('Movie Info: ${widget.movie!.posterPath}');
       } else if (widget.show != null) {
         title = widget.show!.title;
         id = widget.show!.showID;
