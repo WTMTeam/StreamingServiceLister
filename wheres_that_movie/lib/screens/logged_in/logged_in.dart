@@ -30,6 +30,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wheres_that_movie/api/constants.dart';
 import 'package:wheres_that_movie/api/models/movie_model.dart';
+import 'package:wheres_that_movie/api/models/person_model.dart';
 import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/screens/credits/credits.dart';
 import 'package:wheres_that_movie/screens/detailed_page/new_detailed.dart';
@@ -125,7 +126,9 @@ class _MyLoggedInState extends State<MyLoggedIn> {
           Show currentShow = Show.fromJson(searchResults[i]);
           showsAndMovies.add(currentShow);
         } else if (searchResults[i]['media_type'] == "person") {
+          Person currentPerson = Person.fromJson(searchResults[i]);
           people.add(searchResults[i]['name']);
+          showsAndMovies.add(currentPerson);
         }
       }
 
@@ -317,12 +320,13 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                               // TODO: check if posterPath is empty to avoid error
                               Movie? movie;
                               Show? show;
+                              Person person;
                               String isMovie = "";
                               String posterUrl = "";
                               if (showsAndMovies[index] is Movie) {
                                 isMovie = "true";
                                 movie = showsAndMovies[index];
-                                if (!movie!.posterPath.isEmpty) {
+                                if (movie!.posterPath.isNotEmpty) {
                                   missingPath = false;
                                 }
                                 posterUrl =
@@ -330,11 +334,18 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                               } else if (showsAndMovies[index] is Show) {
                                 isMovie = "false";
                                 show = showsAndMovies[index];
-                                if (!show!.posterPath.isEmpty) {
+                                if (show!.posterPath.isNotEmpty) {
                                   missingPath = false;
                                 }
                                 posterUrl =
                                     "https://image.tmdb.org/t/p/w300${show.posterPath}";
+                              } else if (showsAndMovies[index] is Person) {
+                                person = showsAndMovies[index];
+                                if (person.profilePath.isNotEmpty) {
+                                  missingPath = false;
+                                }
+                                posterUrl =
+                                    "https://image.tmdb.org/t/p/w300${person.profilePath}";
                               } else {
                                 print("whuuuut");
                               }
