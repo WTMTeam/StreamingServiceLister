@@ -251,6 +251,10 @@ class _NewDetailedState extends State<NewDetailed> {
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
+          backgroundColor: Theme.of(context).canvasColor,
+          surfaceTintColor: Colors.transparent,
+          shadowColor: Theme.of(context).colorScheme.secondary,
+          elevation: 10.0,
           leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();

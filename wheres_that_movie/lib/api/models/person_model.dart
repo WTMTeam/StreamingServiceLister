@@ -8,6 +8,10 @@
 // profile_path string
 // known_for array of objects
 
+import 'dart:convert';
+
+import 'package:wheres_that_movie/api/constants.dart';
+import 'package:wheres_that_movie/api/models/detailed_person_model.dart';
 import 'package:wheres_that_movie/api/models/movie_model.dart';
 import 'package:wheres_that_movie/api/models/show_model.dart';
 

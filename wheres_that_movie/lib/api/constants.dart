@@ -17,6 +17,7 @@ class ApiEndPoint {
   late String getShowImages;
 
   late String getTrendingPeople;
+  late String getDetailedPerson;
 
   late String searchMovieShowPerson;
   late String getCountries;
@@ -71,6 +72,8 @@ class ApiEndPoint {
 
 // People
     getTrendingPeople = '$baseUrlPath/trending/person/$timeWindow';
+    getDetailedPerson =
+        '$baseUrlPath/person/$id?append_to_response=images,movie_credits,tv_credits,tagged_images&language=en-US';
 
 // General
     searchMovieShowPerson =
