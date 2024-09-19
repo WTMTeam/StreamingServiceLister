@@ -15,7 +15,7 @@ class DetailedPerson {
   final String birthday;
   final String? deathday;
   final int gender;
-  final String homepage;
+  final String? homepage;
   final int personID;
   final String imdbID;
   final String knownForDepartment;
@@ -89,6 +89,12 @@ class DetailedPerson {
         var list = json['tv_credits']['crew'];
         for (var item in list) {
           showCrewCredits.add(ShowCrewCredit.fromJson(item));
+        }
+      }
+      if (json['images']['profiles'] != null) {
+        var list = json['images']['profiles'];
+        for (var item in list) {
+          images.add(MovieImage.fromJson(item));
         }
       }
       return DetailedPerson(
