@@ -11,8 +11,8 @@ import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/screens/detailed_page/new_detailed.dart';
 
 class PersonDetailed extends StatefulWidget {
-  final Person person;
-  const PersonDetailed({super.key, required this.person});
+  final int personId;
+  const PersonDetailed({super.key, required this.personId});
 
   @override
   State<PersonDetailed> createState() => _PersonDetailedState();
@@ -37,7 +37,7 @@ class _PersonDetailedState extends State<PersonDetailed> {
 
   @override
   void initState() {
-    getDetailedPerson(widget.person.personID);
+    getDetailedPerson(widget.personId);
     super.initState();
   }
 

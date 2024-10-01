@@ -363,7 +363,8 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                                           transition: Transition.zoom);
                                     } else if (mediaType == "person") {
                                       Get.to(
-                                          () => PersonDetailed(person: person!),
+                                          () => PersonDetailed(
+                                              personId: person!.personID),
                                           transition: Transition.zoom);
                                     }
                                   },

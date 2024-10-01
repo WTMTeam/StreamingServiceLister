@@ -67,7 +67,8 @@ class ApiEndPoint {
     getTvShowGenresUrl = '$baseUrlPath/genre/tv/list?language=en';
     getTrendingShows = '$baseUrlPath/trending/tv/$timeWindow';
     getShowByShowId = '$baseUrlPath/tv/$id';
-    getCastByShowId = '$baseUrlPath/tv/$id/credits?language=en-US';
+    getCastByShowId = '$baseUrlPath/tv/$id/aggregate_credits?language=en-US';
+    //getCastByShowId = '$baseUrlPath/tv/$id/credits?language=en-US';
     getShowImages = '$baseUrlPath/tv/$id/images';
 
 // People

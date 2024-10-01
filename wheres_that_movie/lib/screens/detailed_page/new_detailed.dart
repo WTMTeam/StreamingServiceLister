@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wheres_that_movie/api/models/cast_model.dart';
+import 'package:wheres_that_movie/api/models/detailed_person_model.dart';
 import 'package:wheres_that_movie/api/models/image_model.dart';
 import 'package:wheres_that_movie/api/models/movie_model.dart';
 import 'package:wheres_that_movie/api/models/provider_model.dart';
@@ -15,6 +16,7 @@ import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/database/database_helper.dart';
 import 'package:wheres_that_movie/screens/detailed_page/local_widgets/display_description.dart';
 import 'package:wheres_that_movie/screens/detailed_page/local_widgets/options_modal.dart';
+import 'package:wheres_that_movie/screens/detailed_page/person_detailed.dart';
 import 'package:wheres_that_movie/widgets/country_dropdown.dart';
 
 class NewDetailed extends StatefulWidget {
@@ -561,6 +563,12 @@ class _NewDetailedState extends State<NewDetailed> {
               child: InkWell(
                 onTap: () {
                   // Go to person page
+
+                  Get.to(
+                      () => PersonDetailed(
+                            personId: castMember.id,
+                          ),
+                      transition: Transition.zoom);
                 },
                 child: Container(
                   clipBehavior: Clip.antiAlias,

@@ -12,7 +12,7 @@ class DetailedPerson {
   final bool adult;
   final List<dynamic> alsoKnownAs;
   final String biography;
-  final String birthday;
+  final String? birthday;
   final String? deathday;
   final int gender;
   final String? homepage;
@@ -20,9 +20,9 @@ class DetailedPerson {
   final String imdbID;
   final String knownForDepartment;
   final String name;
-  final String placeOfBirth;
+  final String? placeOfBirth;
   final double popularity;
-  final String profilePath;
+  final String? profilePath;
   final List<MovieImage> images;
   final List<MovieCastCredit> movieCastCredits;
   final List<MovieCrewCredit> movieCrewCredits;
@@ -52,6 +52,7 @@ class DetailedPerson {
   });
 
   factory DetailedPerson.fromJson(Map<String, dynamic> json) {
+    print(json);
     try {
       String profilePath = "";
       String deathdate = "";
