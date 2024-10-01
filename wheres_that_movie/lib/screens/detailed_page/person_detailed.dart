@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:wheres_that_movie/api/models/detailed_person_model.dart';
 import 'package:wheres_that_movie/api/models/detailed_person_model.dart';
 import 'package:wheres_that_movie/api/models/image_model.dart';
@@ -9,6 +10,7 @@ import 'package:wheres_that_movie/api/models/movie_model.dart';
 import 'package:wheres_that_movie/api/models/person_model.dart';
 import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/screens/detailed_page/new_detailed.dart';
+import 'package:wheres_that_movie/widgets/long_text_container.dart';
 
 class PersonDetailed extends StatefulWidget {
   final int personId;
@@ -43,6 +45,8 @@ class _PersonDetailedState extends State<PersonDetailed> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.sizeOf(context).width;
+    double height = MediaQuery.sizeOf(context).height;
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
@@ -119,16 +123,26 @@ class _PersonDetailedState extends State<PersonDetailed> {
             //   ),
             // ],
           ),
-          body: SingleChildScrollView(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(detailedPerson.biography),
-              detailedPerson.images.isEmpty
-                  ? const SizedBox()
-                  : displayImages(detailedPerson.images),
-            ],
-          )));
+          body: SafeArea(
+            child: SingleChildScrollView(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                detailedPerson.images.isEmpty
+                    ? const SizedBox()
+                    : Center(
+                        child: SizedBox(
+                            height: 400,
+                            width: width,
+                            child: displayImages(detailedPerson.images)),
+                      ),
+                Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 4.0),
+                    child: LongText(longText: detailedPerson.biography)),
+              ],
+            )),
+          ));
     }
   }
 
@@ -140,15 +154,14 @@ class _PersonDetailedState extends State<PersonDetailed> {
             autoPlayAnimationDuration: const Duration(milliseconds: 1500),
             autoPlayInterval: const Duration(seconds: 4),
             autoPlayCurve: Curves.ease,
-            //autoPlayCurve: Curves.easeInToLinear,
-            //autoPlayCurve: Curves.linearToEaseOut,
             aspectRatio: movieImages[0].aspectRatio,
-            viewportFraction: 0.9),
+            viewportFraction: 0.7),
         itemCount: movieImages.length,
         itemBuilder: (context, index, realIndex) {
           String path =
               "https://image.tmdb.org/t/p/original${movieImages[index].filePath}";
           return Container(
+            //padding: const EdgeInsets.symmetric(horizontal: 20.0),
             margin: const EdgeInsets.symmetric(vertical: 20.0),
             clipBehavior: Clip.antiAlias,
             decoration: const BoxDecoration(
