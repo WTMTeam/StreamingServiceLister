@@ -9,6 +9,7 @@ import 'package:wheres_that_movie/api/models/image_model.dart';
 import 'package:wheres_that_movie/api/models/movie_credit_model.dart';
 import 'package:wheres_that_movie/api/models/movie_model.dart';
 import 'package:wheres_that_movie/api/models/person_model.dart';
+import 'package:wheres_that_movie/api/models/show_credit_model.dart';
 import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/screens/detailed_page/new_detailed.dart';
 import 'package:wheres_that_movie/widgets/long_text_container.dart';
@@ -33,6 +34,7 @@ class _PersonDetailedState extends State<PersonDetailed> {
     var res = await DetailedPersonService().getDetailedPersonById(personId: id);
 
     getMovies(res.movieCastCredits, res.movieCrewCredits);
+    getShows(res.showCastCredits, res.showCrewCredits);
 
     setState(() {
       detailedPerson = res;
@@ -47,6 +49,15 @@ class _PersonDetailedState extends State<PersonDetailed> {
     }
     for (var crew in crewCredits) {
       movies.add(crew.movie);
+    }
+  }
+
+  getShows(List<ShowCastCredit> castCredits, List<ShowCrewCredit> crewCredits) {
+    for (var credit in castCredits) {
+      shows.add(credit.show);
+    }
+    for (var crew in crewCredits) {
+      shows.add(crew.show);
     }
   }
 
@@ -154,6 +165,7 @@ class _PersonDetailedState extends State<PersonDetailed> {
                         horizontal: 8.0, vertical: 4.0),
                     child: LongText(longText: detailedPerson.biography)),
                 displayMovies(movies),
+                displayShows(shows),
               ],
             )),
           ));
@@ -281,6 +293,94 @@ class _PersonDetailedState extends State<PersonDetailed> {
                 child: Center(
                   child: Text(
                     movie.title.split(' ').join('\n'),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+                //child: const Icon(Icons.error),
+              ),
+            );
+          }
+        }),
+      ),
+    ));
+  }
+
+  Widget displayShows(List<Show> shows) {
+    return (Container(
+      margin: const EdgeInsets.only(bottom: 12.0, left: 5.0, right: 5.0),
+      height: 150.0,
+      child: ListView.builder(
+        itemCount: shows.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: ((context, index) {
+          Show show = shows[index];
+          bool missingPath = show.posterPath.isEmpty;
+
+          if (!missingPath) {
+            String profilePath =
+                "https://image.tmdb.org/t/p/w92${show.posterPath}";
+
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
+              child: InkWell(
+                onTap: () {
+                  // Go to person page
+
+                  Get.to(
+                      () => NewDetailed(
+                            show: show,
+                          ),
+                      transition: Transition.zoom);
+                },
+                child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(12.0),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5), // Shadow color
+                        spreadRadius: 2, // Spread radius
+                        blurRadius: 5, // Blur radius
+                        offset: const Offset(
+                            1, 2), // Offset from the top left corner
+                      ),
+                    ],
+                  ),
+                  child: CachedNetworkImage(
+                    imageUrl: profilePath,
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  ),
+                ),
+              ),
+            );
+          } else {
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
+              child: Container(
+                width: 92.0,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(12.0),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.5), // Shadow color
+                      spreadRadius: 2, // Spread radius
+                      blurRadius: 5, // Blur radius
+                      offset:
+                          const Offset(1, 2), // Offset from the top left corner
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    show.title.split(' ').join('\n'),
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
