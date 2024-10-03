@@ -17,7 +17,7 @@ class DetailedPerson {
   final int gender;
   final String? homepage;
   final int personID;
-  final String imdbID;
+  final String? imdbID;
   final String knownForDepartment;
   final String name;
   final String? placeOfBirth;

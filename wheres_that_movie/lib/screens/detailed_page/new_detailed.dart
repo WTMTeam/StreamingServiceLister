@@ -562,8 +562,6 @@ class _NewDetailedState extends State<NewDetailed> {
                   const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
               child: InkWell(
                 onTap: () {
-                  // Go to person page
-
                   Get.to(
                       () => PersonDetailed(
                             personId: castMember.id,
@@ -598,30 +596,40 @@ class _NewDetailedState extends State<NewDetailed> {
             return Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
-              child: Container(
-                width: 92.0,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(12.0),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.5), // Shadow color
-                      spreadRadius: 2, // Spread radius
-                      blurRadius: 5, // Blur radius
-                      offset:
-                          const Offset(1, 2), // Offset from the top left corner
+              child: InkWell(
+                onTap: () {
+                  Get.to(
+                      () => PersonDetailed(
+                            personId: castMember.id,
+                          ),
+                      transition: Transition.zoom);
+                },
+                child: Container(
+                  width: 92.0,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(12.0),
                     ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    castMember.name.split(' ').join('\n'),
-                    style: Theme.of(context).textTheme.bodySmall,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5), // Shadow color
+                        spreadRadius: 2, // Spread radius
+                        blurRadius: 5, // Blur radius
+                        offset: const Offset(
+                            1, 2), // Offset from the top left corner
+                      ),
+                    ],
                   ),
+                  child: Center(
+                    child: Text(
+                      castMember.name.split(' ').join('\n'),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                  //child: const Icon(Icons.error),
                 ),
-                //child: const Icon(Icons.error),
               ),
             );
           }

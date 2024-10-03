@@ -10,9 +10,13 @@ class LongText extends StatefulWidget {
 
 class _LongTextState extends State<LongText> {
   bool isExpanded = false;
+  bool willExpand = true;
 
   @override
   Widget build(BuildContext context) {
+    if (widget.longText == "") {
+      willExpand = false;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -22,25 +26,27 @@ class _LongTextState extends State<LongText> {
           overflow: TextOverflow.fade, // Handle overflow
         ),
         const SizedBox(height: 5), // Space between text and button
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              isExpanded = !isExpanded; // Toggle expansion
-            });
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: Text(
-                  isExpanded ? "See less" : "See more",
-                  style: TextStyle(color: Theme.of(context).primaryColor),
+        willExpand
+            ? GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isExpanded = !isExpanded; // Toggle expansion
+                  });
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Text(
+                        isExpanded ? "See less" : "See more",
+                        style: TextStyle(color: Theme.of(context).primaryColor),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ),
+              )
+            : const SizedBox(),
       ],
     );
   }

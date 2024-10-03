@@ -7,10 +7,10 @@ import 'package:wheres_that_movie/api/models/detailed_person_model.dart';
 import 'package:wheres_that_movie/api/models/image_model.dart';
 import 'package:wheres_that_movie/api/models/movie_credit_model.dart';
 import 'package:wheres_that_movie/api/models/movie_model.dart';
-import 'package:wheres_that_movie/api/models/person_model.dart';
 import 'package:wheres_that_movie/api/models/show_credit_model.dart';
 import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/screens/detailed_page/new_detailed.dart';
+import 'package:wheres_that_movie/screens/logged_in/logged_in.dart';
 import 'package:wheres_that_movie/widgets/long_text_container.dart';
 
 class PersonDetailed extends StatefulWidget {
@@ -25,6 +25,7 @@ class _PersonDetailedState extends State<PersonDetailed> {
   List<Movie> movies = [];
   List<Show> shows = [];
   bool _isLoading = true;
+  bool _isError = false;
   late DetailedPerson detailedPerson;
 
   // DetailedPerson detailedPerson = DetailedPersonService().getDetailedPersonById(personId: widget.person.personID),
@@ -126,25 +127,15 @@ class _PersonDetailedState extends State<PersonDetailed> {
             surfaceTintColor: Colors.transparent,
             shadowColor: Theme.of(context).colorScheme.secondary,
             elevation: 10.0,
-            // actions: [
-            //   IconButton(
-            //     onPressed: () {
-            //       // if (itemInMyList) {
-            //       //   _deleteItem(id);
-            //       // } else {
-            //       //   widget.movie != null
-            //       //       ? _addItem(movie: widget.movie)
-            //       //       : _addItem(show: widget.show);
-            //       // }
-            //     },
-            //     icon: Icon(
-            //         itemInMyList
-            //             ? CupertinoIcons.delete
-            //             : CupertinoIcons.add_circled,
-            //         size: 32,
-            //         color: Theme.of(context).primaryColor),
-            //   ),
-            // ],
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+                icon: Icon(CupertinoIcons.home,
+                    size: 32, color: Theme.of(context).primaryColor),
+              ),
+            ],
           ),
           body: SafeArea(
             child: SingleChildScrollView(
@@ -171,6 +162,13 @@ class _PersonDetailedState extends State<PersonDetailed> {
                   ),
                 ),
                 displayMovies(movies),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    "TV-Shows",
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ),
                 displayShows(shows),
               ],
             )),
@@ -196,9 +194,17 @@ class _PersonDetailedState extends State<PersonDetailed> {
             //padding: const EdgeInsets.symmetric(horizontal: 20.0),
             margin: const EdgeInsets.symmetric(vertical: 20.0),
             clipBehavior: Clip.antiAlias,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(28.0)),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(28.0)),
               shape: BoxShape.rectangle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5), // Shadow color
+                  spreadRadius: 2, // Spread radius
+                  blurRadius: 5, // Blur radius
+                  offset: const Offset(1, 2), // Offset from the top left corner
+                ),
+              ],
             ),
             child: CachedNetworkImage(
               placeholder: (context, url) => Container(
@@ -279,30 +285,40 @@ class _PersonDetailedState extends State<PersonDetailed> {
             return Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
-              child: Container(
-                width: 92.0,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(12.0),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.5), // Shadow color
-                      spreadRadius: 2, // Spread radius
-                      blurRadius: 5, // Blur radius
-                      offset:
-                          const Offset(1, 2), // Offset from the top left corner
+              child: InkWell(
+                onTap: () {
+                  Get.to(
+                      () => NewDetailed(
+                            movie: movie,
+                          ),
+                      transition: Transition.zoom);
+                },
+                child: Container(
+                  width: 92.0,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(12.0),
                     ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    movie.title.split(' ').join('\n'),
-                    style: Theme.of(context).textTheme.bodySmall,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5), // Shadow color
+                        spreadRadius: 2, // Spread radius
+                        blurRadius: 5, // Blur radius
+                        offset: const Offset(
+                            1, 2), // Offset from the top left corner
+                      ),
+                    ],
                   ),
+                  child: Center(
+                    child: Text(
+                      movie.title.split(' ').join('\n'),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                  //child: const Icon(Icons.error),
                 ),
-                //child: const Icon(Icons.error),
               ),
             );
           }
@@ -367,30 +383,41 @@ class _PersonDetailedState extends State<PersonDetailed> {
             return Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
-              child: Container(
-                width: 92.0,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(12.0),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.5), // Shadow color
-                      spreadRadius: 2, // Spread radius
-                      blurRadius: 5, // Blur radius
-                      offset:
-                          const Offset(1, 2), // Offset from the top left corner
+              child: InkWell(
+                onTap: () {
+                  Get.to(
+                      () => NewDetailed(
+                            show: show,
+                          ),
+                      transition: Transition.zoom);
+                },
+                child: Container(
+                  width: 92.0,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    //color: Colors.green,
+                    color: Theme.of(context).cardColor,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(12.0),
                     ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    show.title.split(' ').join('\n'),
-                    style: Theme.of(context).textTheme.bodySmall,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5), // Shadow color
+                        spreadRadius: 2, // Spread radius
+                        blurRadius: 5, // Blur radius
+                        offset: const Offset(
+                            1, 2), // Offset from the top left corner
+                      ),
+                    ],
                   ),
+                  child: Center(
+                    child: Text(
+                      show.title.split(' ').join('\n'),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                  //child: const Icon(Icons.error),
                 ),
-                //child: const Icon(Icons.error),
               ),
             );
           }
