@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wheres_that_movie/api/models/detailed_person_model.dart';
-import 'package:wheres_that_movie/api/models/detailed_person_model.dart';
 import 'package:wheres_that_movie/api/models/image_model.dart';
 import 'package:wheres_that_movie/api/models/movie_credit_model.dart';
 import 'package:wheres_that_movie/api/models/movie_model.dart';
@@ -164,6 +163,13 @@ class _PersonDetailedState extends State<PersonDetailed> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8.0, vertical: 4.0),
                     child: LongText(longText: detailedPerson.biography)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    "Movies",
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ),
                 displayMovies(movies),
                 displayShows(shows),
               ],
@@ -230,7 +236,7 @@ class _PersonDetailedState extends State<PersonDetailed> {
 
           if (!missingPath) {
             String profilePath =
-                "https://image.tmdb.org/t/p/w92${movie.posterPath}";
+                "https://image.tmdb.org/t/p/original${movie.posterPath}";
 
             return Padding(
               padding:
@@ -318,7 +324,7 @@ class _PersonDetailedState extends State<PersonDetailed> {
 
           if (!missingPath) {
             String profilePath =
-                "https://image.tmdb.org/t/p/w92${show.posterPath}";
+                "https://image.tmdb.org/t/p/original${show.posterPath}";
 
             return Padding(
               padding:

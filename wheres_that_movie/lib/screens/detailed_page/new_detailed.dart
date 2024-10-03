@@ -506,7 +506,7 @@ class _NewDetailedState extends State<NewDetailed> {
           Provider provider = allProviders[providerType]![index];
 
           String providerImageUrl =
-              "https://image.tmdb.org/t/p/w92${provider.logoPath}";
+              "https://image.tmdb.org/t/p/original${provider.logoPath}";
 
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
@@ -555,7 +555,7 @@ class _NewDetailedState extends State<NewDetailed> {
 
           if (!missingPath) {
             String profilePath =
-                "https://image.tmdb.org/t/p/w92${castMember.profilePath}";
+                "https://image.tmdb.org/t/p/original${castMember.profilePath}";
 
             return Padding(
               padding:
