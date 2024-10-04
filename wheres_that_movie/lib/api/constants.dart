@@ -17,6 +17,7 @@ class ApiEndPoint {
   late String getShowImages;
 
   late String getTrendingPeople;
+  late String getDetailedPerson;
 
   late String searchMovieShowPerson;
   late String getCountries;
@@ -66,11 +67,14 @@ class ApiEndPoint {
     getTvShowGenresUrl = '$baseUrlPath/genre/tv/list?language=en';
     getTrendingShows = '$baseUrlPath/trending/tv/$timeWindow';
     getShowByShowId = '$baseUrlPath/tv/$id';
-    getCastByShowId = '$baseUrlPath/tv/$id/credits?language=en-US';
+    getCastByShowId = '$baseUrlPath/tv/$id/aggregate_credits?language=en-US';
+    //getCastByShowId = '$baseUrlPath/tv/$id/credits?language=en-US';
     getShowImages = '$baseUrlPath/tv/$id/images';
 
 // People
     getTrendingPeople = '$baseUrlPath/trending/person/$timeWindow';
+    getDetailedPerson =
+        '$baseUrlPath/person/$id?append_to_response=images,movie_credits,tv_credits,tagged_images&language=en-US';
 
 // General
     searchMovieShowPerson =

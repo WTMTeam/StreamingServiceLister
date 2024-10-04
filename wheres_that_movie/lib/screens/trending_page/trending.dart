@@ -13,8 +13,8 @@
 
 import 'dart:math';
 import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tmdb_api/tmdb_api.dart';
 import 'package:wheres_that_movie/api/models/movie_model.dart';
 import 'package:wheres_that_movie/screens/trending_page/trending_appbar.dart';
 import 'package:wheres_that_movie/screens/trending_page/trending_card.dart';
@@ -38,6 +38,8 @@ class _MyTrendingState extends State<MyTrending> {
   List voteAverageMovie = [];
   List cards = [];
   bool _isLoading = false;
+  bool _isError = false;
+  String _errorText = "";
   bool isHorizontal = false;
   bool cardsVisible = true;
   final carouselController = PageController(viewportFraction: 0.8);
@@ -45,35 +47,17 @@ class _MyTrendingState extends State<MyTrending> {
 
   loadTrendingMovies() async {
     _isLoading = true;
-    // final tmdbWithCustomLogs = TMDB(
-    //   //TMDB instance
-    //   ApiKeys(apiKey, readAccessToken), //ApiKeys instance with your keys,
-    //   logConfig: const ConfigLogger(
-    //     showLogs: true, //must be true than only all other logs will be shown
-    //     showErrorLogs: true,
-    //   ),
-    // );
-    //Map result = await tmdbWithCustomLogs.v3.trending.getTrending();
     String timeWindow = "week";
-
-    trendingMovies = await MovieService().getTrendingMovies(timeWindow);
-
-    setState(() {
-      //trendingMovies = result['results'];
-    });
-    // for (int i = 0; i < 10; i++) {
-    //   try {
-    //     // if title returns null, then try name instead
-    //     String title = trendingMovies[i]["title"] ?? trendingMovies[i]['name'];
-    //
-    //     double vote = trendingMovies[i]["vote_average"];
-    //     trendingTitles.add(title);
-    //     voteAverageMovie.add(vote);
-    //   } catch (e) {
-    //     // Print error message
-    //   }
-    // }
-    makeCardList();
+    try {
+      trendingMovies = await MovieService().getTrendingMovies(timeWindow);
+      makeCardList();
+    } catch (error) {
+      _errorText = error.toString();
+      _isError = true;
+      _isLoading = false;
+    } finally {
+      setState(() {});
+    }
   }
 
   // Make the card list
@@ -109,17 +93,53 @@ class _MyTrendingState extends State<MyTrending> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     if (_isLoading) {
-      return const Scaffold(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            Center(
-              child: CircularProgressIndicator(),
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).canvasColor,
+          surfaceTintColor: Colors.transparent,
+          shadowColor: Theme.of(context).colorScheme.secondary,
+          elevation: 10.0,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(
+              CupertinoIcons.arrow_down,
+              color: Theme.of(context).colorScheme.primary,
             ),
-          ],
+          ),
         ),
       );
+    } else if (_isError) {
+      return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).canvasColor,
+            surfaceTintColor: Colors.transparent,
+            shadowColor: Theme.of(context).colorScheme.secondary,
+            elevation: 10.0,
+            centerTitle: true,
+            leading: IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: Icon(
+                CupertinoIcons.arrow_down,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            title: Text(
+              "Something went wrong",
+              style: Theme.of(context).textTheme.displayMedium,
+            ),
+          ),
+          body: SafeArea(
+            child: Column(
+              children: [
+                const Icon(CupertinoIcons.wifi_exclamationmark),
+                Text(_errorText),
+              ],
+            ),
+          ));
     } else if (!isHorizontal) {
       return Scaffold(
         appBar: AppBar(

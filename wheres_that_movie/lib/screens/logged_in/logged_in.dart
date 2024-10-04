@@ -30,9 +30,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wheres_that_movie/api/constants.dart';
 import 'package:wheres_that_movie/api/models/movie_model.dart';
+import 'package:wheres_that_movie/api/models/person_model.dart';
 import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/screens/credits/credits.dart';
 import 'package:wheres_that_movie/screens/detailed_page/new_detailed.dart';
+import 'package:wheres_that_movie/screens/detailed_page/person_detailed.dart';
 import 'package:wheres_that_movie/screens/my_list/my_list.dart';
 import 'package:wheres_that_movie/screens/suggestions/suggestions.dart';
 import 'package:wheres_that_movie/screens/trending_page/trending.dart';
@@ -125,7 +127,9 @@ class _MyLoggedInState extends State<MyLoggedIn> {
           Show currentShow = Show.fromJson(searchResults[i]);
           showsAndMovies.add(currentShow);
         } else if (searchResults[i]['media_type'] == "person") {
+          Person currentPerson = Person.fromJson(searchResults[i]);
           people.add(searchResults[i]['name']);
+          showsAndMovies.add(currentPerson);
         }
       }
 
@@ -317,24 +321,33 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                               // TODO: check if posterPath is empty to avoid error
                               Movie? movie;
                               Show? show;
-                              String isMovie = "";
+                              Person? person;
+                              String mediaType = "";
                               String posterUrl = "";
                               if (showsAndMovies[index] is Movie) {
-                                isMovie = "true";
+                                mediaType = "movie";
                                 movie = showsAndMovies[index];
-                                if (!movie!.posterPath.isEmpty) {
+                                if (movie!.posterPath.isNotEmpty) {
                                   missingPath = false;
                                 }
                                 posterUrl =
                                     "https://image.tmdb.org/t/p/w300${movie.posterPath}";
                               } else if (showsAndMovies[index] is Show) {
-                                isMovie = "false";
+                                mediaType = "tv";
                                 show = showsAndMovies[index];
-                                if (!show!.posterPath.isEmpty) {
+                                if (show!.posterPath.isNotEmpty) {
                                   missingPath = false;
                                 }
                                 posterUrl =
                                     "https://image.tmdb.org/t/p/w300${show.posterPath}";
+                              } else if (showsAndMovies[index] is Person) {
+                                mediaType = "person";
+                                person = showsAndMovies[index];
+                                if (person!.profilePath.isNotEmpty) {
+                                  missingPath = false;
+                                }
+                                posterUrl =
+                                    "https://image.tmdb.org/t/p/w300${person.profilePath}";
                               } else {
                                 print("whuuuut");
                               }
@@ -342,11 +355,16 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                               if (!missingPath) {
                                 return InkWell(
                                   onTap: () {
-                                    if (isMovie == "true") {
+                                    if (mediaType == "movie") {
                                       Get.to(() => NewDetailed(movie: movie),
                                           transition: Transition.zoom);
-                                    } else if (isMovie == "false") {
+                                    } else if (mediaType == "tv") {
                                       Get.to(() => NewDetailed(show: show),
+                                          transition: Transition.zoom);
+                                    } else if (mediaType == "person") {
+                                      Get.to(
+                                          () => PersonDetailed(
+                                              personId: person!.personID),
                                           transition: Transition.zoom);
                                     }
                                   },
@@ -374,10 +392,10 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                               } else {
                                 return InkWell(
                                     onTap: () {
-                                      if (isMovie == "true") {
+                                      if (mediaType == "true") {
                                         Get.to(() => NewDetailed(movie: movie),
                                             transition: Transition.zoom);
-                                      } else if (isMovie == "false") {
+                                      } else if (mediaType == "false") {
                                         Get.to(() => NewDetailed(show: show),
                                             transition: Transition.zoom);
                                       }

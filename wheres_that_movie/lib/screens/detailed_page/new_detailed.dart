@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wheres_that_movie/api/models/cast_model.dart';
+import 'package:wheres_that_movie/api/models/detailed_person_model.dart';
 import 'package:wheres_that_movie/api/models/image_model.dart';
 import 'package:wheres_that_movie/api/models/movie_model.dart';
 import 'package:wheres_that_movie/api/models/provider_model.dart';
@@ -15,6 +16,7 @@ import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/database/database_helper.dart';
 import 'package:wheres_that_movie/screens/detailed_page/local_widgets/display_description.dart';
 import 'package:wheres_that_movie/screens/detailed_page/local_widgets/options_modal.dart';
+import 'package:wheres_that_movie/screens/detailed_page/person_detailed.dart';
 import 'package:wheres_that_movie/widgets/country_dropdown.dart';
 
 class NewDetailed extends StatefulWidget {
@@ -251,6 +253,10 @@ class _NewDetailedState extends State<NewDetailed> {
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
+          backgroundColor: Theme.of(context).canvasColor,
+          surfaceTintColor: Colors.transparent,
+          shadowColor: Theme.of(context).colorScheme.secondary,
+          elevation: 10.0,
           leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -500,7 +506,7 @@ class _NewDetailedState extends State<NewDetailed> {
           Provider provider = allProviders[providerType]![index];
 
           String providerImageUrl =
-              "https://image.tmdb.org/t/p/w92${provider.logoPath}";
+              "https://image.tmdb.org/t/p/original${provider.logoPath}";
 
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
@@ -549,14 +555,18 @@ class _NewDetailedState extends State<NewDetailed> {
 
           if (!missingPath) {
             String profilePath =
-                "https://image.tmdb.org/t/p/w92${castMember.profilePath}";
+                "https://image.tmdb.org/t/p/original${castMember.profilePath}";
 
             return Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
               child: InkWell(
                 onTap: () {
-                  // Go to person page
+                  Get.to(
+                      () => PersonDetailed(
+                            personId: castMember.id,
+                          ),
+                      transition: Transition.zoom);
                 },
                 child: Container(
                   clipBehavior: Clip.antiAlias,
@@ -586,30 +596,40 @@ class _NewDetailedState extends State<NewDetailed> {
             return Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
-              child: Container(
-                width: 92.0,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(12.0),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.5), // Shadow color
-                      spreadRadius: 2, // Spread radius
-                      blurRadius: 5, // Blur radius
-                      offset:
-                          const Offset(1, 2), // Offset from the top left corner
+              child: InkWell(
+                onTap: () {
+                  Get.to(
+                      () => PersonDetailed(
+                            personId: castMember.id,
+                          ),
+                      transition: Transition.zoom);
+                },
+                child: Container(
+                  width: 92.0,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(12.0),
                     ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    castMember.name.split(' ').join('\n'),
-                    style: Theme.of(context).textTheme.bodySmall,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5), // Shadow color
+                        spreadRadius: 2, // Spread radius
+                        blurRadius: 5, // Blur radius
+                        offset: const Offset(
+                            1, 2), // Offset from the top left corner
+                      ),
+                    ],
                   ),
+                  child: Center(
+                    child: Text(
+                      castMember.name.split(' ').join('\n'),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                  //child: const Icon(Icons.error),
                 ),
-                //child: const Icon(Icons.error),
               ),
             );
           }
