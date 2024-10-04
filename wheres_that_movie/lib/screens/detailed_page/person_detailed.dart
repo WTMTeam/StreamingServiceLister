@@ -10,7 +10,6 @@ import 'package:wheres_that_movie/api/models/movie_model.dart';
 import 'package:wheres_that_movie/api/models/show_credit_model.dart';
 import 'package:wheres_that_movie/api/models/show_model.dart';
 import 'package:wheres_that_movie/screens/detailed_page/new_detailed.dart';
-import 'package:wheres_that_movie/screens/logged_in/logged_in.dart';
 import 'package:wheres_that_movie/widgets/long_text_container.dart';
 
 class PersonDetailed extends StatefulWidget {
@@ -26,20 +25,27 @@ class _PersonDetailedState extends State<PersonDetailed> {
   List<Show> shows = [];
   bool _isLoading = true;
   bool _isError = false;
+  String _errorText = "";
   late DetailedPerson detailedPerson;
 
-  // DetailedPerson detailedPerson = DetailedPersonService().getDetailedPersonById(personId: widget.person.personID),
-
   getDetailedPerson(int id) async {
-    var res = await DetailedPersonService().getDetailedPersonById(personId: id);
+    try {
+      var res =
+          await DetailedPersonService().getDetailedPersonById(personId: id);
 
-    getMovies(res.movieCastCredits, res.movieCrewCredits);
-    getShows(res.showCastCredits, res.showCrewCredits);
+      getMovies(res.movieCastCredits, res.movieCrewCredits);
+      getShows(res.showCastCredits, res.showCrewCredits);
 
-    setState(() {
-      detailedPerson = res;
-      _isLoading = false;
-    });
+      setState(() {
+        detailedPerson = res;
+        _isLoading = false;
+      });
+    } catch (error) {
+      setState(() {
+        _isError = true;
+        _errorText = error.toString();
+      });
+    }
   }
 
   getMovies(
@@ -98,6 +104,35 @@ class _PersonDetailedState extends State<PersonDetailed> {
           ],
         ),
       );
+    } else if (_isError) {
+      return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).canvasColor,
+            surfaceTintColor: Colors.transparent,
+            shadowColor: Theme.of(context).colorScheme.secondary,
+            elevation: 10.0,
+            centerTitle: true,
+            leading: IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: Icon(
+                CupertinoIcons.arrow_down,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            title: Text(
+              "Something went wrong",
+              style: Theme.of(context).textTheme.displayMedium,
+            ),
+          ),
+          body: SafeArea(
+            child: Column(
+              children: [
+                Text(_errorText),
+              ],
+            ),
+          ));
     } else {
       return Scaffold(
           appBar: AppBar(
@@ -106,8 +141,6 @@ class _PersonDetailedState extends State<PersonDetailed> {
                 Navigator.of(context).pop();
               },
               icon: Icon(
-                // Icons.arrow_back_ios,
-                //CupertinoIcons.arrow_down_right_arrow_up_left,
                 CupertinoIcons.fullscreen_exit,
                 color: Theme.of(context).colorScheme.primary,
               ),
@@ -191,7 +224,6 @@ class _PersonDetailedState extends State<PersonDetailed> {
           String path =
               "https://image.tmdb.org/t/p/original${movieImages[index].filePath}";
           return Container(
-            //padding: const EdgeInsets.symmetric(horizontal: 20.0),
             margin: const EdgeInsets.symmetric(vertical: 20.0),
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
@@ -199,20 +231,19 @@ class _PersonDetailedState extends State<PersonDetailed> {
               shape: BoxShape.rectangle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.5), // Shadow color
-                  spreadRadius: 2, // Spread radius
-                  blurRadius: 5, // Blur radius
-                  offset: const Offset(1, 2), // Offset from the top left corner
+                  color: Colors.black.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: const Offset(1, 2),
                 ),
               ],
             ),
             child: CachedNetworkImage(
               placeholder: (context, url) => Container(
                 margin: const EdgeInsets.symmetric(vertical: 20.0),
-                //width: width - 10,
                 height: 2000,
                 decoration: const BoxDecoration(
-                  color: Colors.transparent, // Placeholder color
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.all(Radius.circular(28.0)),
                 ),
               ),
@@ -230,6 +261,7 @@ class _PersonDetailedState extends State<PersonDetailed> {
   }
 
   Widget displayMovies(List<Movie> movies) {
+    movies.sort((b, a) => a.rating.compareTo(b.rating));
     return (Container(
       margin: const EdgeInsets.only(bottom: 12.0, left: 5.0, right: 5.0),
       height: 150.0,
@@ -249,8 +281,6 @@ class _PersonDetailedState extends State<PersonDetailed> {
                   const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
               child: InkWell(
                 onTap: () {
-                  // Go to person page
-
                   Get.to(
                       () => NewDetailed(
                             movie: movie,
@@ -265,11 +295,10 @@ class _PersonDetailedState extends State<PersonDetailed> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.5), // Shadow color
-                        spreadRadius: 2, // Spread radius
-                        blurRadius: 5, // Blur radius
-                        offset: const Offset(
-                            1, 2), // Offset from the top left corner
+                        color: Colors.black.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(1, 2),
                       ),
                     ],
                   ),
@@ -303,11 +332,10 @@ class _PersonDetailedState extends State<PersonDetailed> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.5), // Shadow color
-                        spreadRadius: 2, // Spread radius
-                        blurRadius: 5, // Blur radius
-                        offset: const Offset(
-                            1, 2), // Offset from the top left corner
+                        color: Colors.black.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(1, 2),
                       ),
                     ],
                   ),
@@ -317,7 +345,6 @@ class _PersonDetailedState extends State<PersonDetailed> {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
-                  //child: const Icon(Icons.error),
                 ),
               ),
             );
@@ -328,6 +355,7 @@ class _PersonDetailedState extends State<PersonDetailed> {
   }
 
   Widget displayShows(List<Show> shows) {
+    shows.sort((b, a) => a.rating.compareTo(b.rating));
     return (Container(
       margin: const EdgeInsets.only(bottom: 12.0, left: 5.0, right: 5.0),
       height: 150.0,
@@ -347,8 +375,6 @@ class _PersonDetailedState extends State<PersonDetailed> {
                   const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
               child: InkWell(
                 onTap: () {
-                  // Go to person page
-
                   Get.to(
                       () => NewDetailed(
                             show: show,
@@ -363,11 +389,10 @@ class _PersonDetailedState extends State<PersonDetailed> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.5), // Shadow color
-                        spreadRadius: 2, // Spread radius
-                        blurRadius: 5, // Blur radius
-                        offset: const Offset(
-                            1, 2), // Offset from the top left corner
+                        color: Colors.black.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(1, 2),
                       ),
                     ],
                   ),
@@ -395,18 +420,16 @@ class _PersonDetailedState extends State<PersonDetailed> {
                   width: 92.0,
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
-                    //color: Colors.green,
                     color: Theme.of(context).cardColor,
                     borderRadius: const BorderRadius.all(
                       Radius.circular(12.0),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.5), // Shadow color
-                        spreadRadius: 2, // Spread radius
-                        blurRadius: 5, // Blur radius
-                        offset: const Offset(
-                            1, 2), // Offset from the top left corner
+                        color: Colors.black.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(1, 2),
                       ),
                     ],
                   ),
@@ -416,7 +439,6 @@ class _PersonDetailedState extends State<PersonDetailed> {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
-                  //child: const Icon(Icons.error),
                 ),
               ),
             );

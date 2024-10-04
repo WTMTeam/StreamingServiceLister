@@ -1,12 +1,9 @@
 import 'dart:convert';
-
 import 'package:wheres_that_movie/api/constants.dart';
 import 'package:wheres_that_movie/api/models/image_model.dart';
 import 'package:wheres_that_movie/api/models/movie_credit_model.dart';
 import 'package:wheres_that_movie/api/models/show_credit_model.dart';
-
 import 'package:http/http.dart' as http;
-//fetch('https://api.themoviedb.org/3/person/500?append_to_response=images%2Cmovie_credits%2Ctv_credits%2Ctagged_images&language=en-US', options)
 
 class DetailedPerson {
   final bool adult;
@@ -52,7 +49,6 @@ class DetailedPerson {
   });
 
   factory DetailedPerson.fromJson(Map<String, dynamic> json) {
-    print(json);
     try {
       String profilePath = "";
       String deathdate = "";
@@ -120,28 +116,7 @@ class DetailedPerson {
         showCrewCredits: showCrewCredits,
       );
     } catch (e) {
-      print('error in DetailedPerson $e');
-      return const DetailedPerson(
-        adult: false,
-        alsoKnownAs: [],
-        biography: "",
-        birthday: "",
-        deathday: "",
-        gender: 0000,
-        homepage: '',
-        personID: 0000,
-        imdbID: '',
-        knownForDepartment: '',
-        name: '',
-        placeOfBirth: '',
-        popularity: 0.00,
-        profilePath: '',
-        images: [],
-        movieCastCredits: [],
-        movieCrewCredits: [],
-        showCastCredits: [],
-        showCrewCredits: [],
-      );
+      throw Exception("Failed Getting Detailed Person: $e");
     }
   }
 }
@@ -154,22 +129,17 @@ class DetailedPersonService {
   };
 
   Future<DetailedPerson> getDetailedPersonById({int personId = 0}) async {
-    try {
-      var response = await http.get(
-          Uri.parse(ApiEndPoint(id: personId).getDetailedPerson),
-          headers: headers);
+    var response = await http.get(
+        Uri.parse(ApiEndPoint(id: personId).getDetailedPerson),
+        headers: headers);
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final person = DetailedPerson.fromJson(data);
-        return person;
-      } else {
-        throw Exception(
-            'HTTP FAILED getting DetailedPerson with status code: ${response.statusCode}');
-      }
-    } catch (error) {
-      print("Error getting DetailedPerson: $error");
-      throw Exception('Failed getting DetailedPerson');
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final person = DetailedPerson.fromJson(data);
+      return person;
+    } else {
+      throw Exception(
+          'HTTP FAILED getting DetailedPerson with status code: ${response.statusCode}');
     }
   }
 }
