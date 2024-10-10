@@ -250,6 +250,8 @@ class _NewDetailedState extends State<NewDetailed> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
@@ -298,8 +300,6 @@ class _NewDetailedState extends State<NewDetailed> {
               Navigator.of(context).pop();
             },
             icon: Icon(
-              // Icons.arrow_back_ios,
-              //CupertinoIcons.arrow_down_right_arrow_up_left,
               CupertinoIcons.fullscreen_exit,
               color: Theme.of(context).colorScheme.primary,
             ),
@@ -330,12 +330,8 @@ class _NewDetailedState extends State<NewDetailed> {
                       : _addItem(show: widget.show);
                 }
               },
-              icon: Icon(
-                  itemInMyList
-                      ? CupertinoIcons.delete
-                      : CupertinoIcons.add_circled,
-                  size: 32,
-                  color: Theme.of(context).primaryColor),
+              icon: Icon(CupertinoIcons.home,
+                  size: 32, color: Theme.of(context).primaryColor),
             ),
           ],
         ),
@@ -380,35 +376,57 @@ class _NewDetailedState extends State<NewDetailed> {
                   ),
                 ],
               ),
-
               Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 15.0,
-                    horizontal: 10.0,
-                  ),
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(50.0)),
-                  child: CountryDropdown(
-                    onChanged: (code) {
-                      countryCode = code;
-                      getProviders(currentOption, countryCode,
-                          movie: widget.movie, show: widget.show);
+                margin: const EdgeInsets.symmetric(
+                  vertical: 15.0,
+                  horizontal: 10.0,
+                ),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(50.0)),
+                child: CountryDropdown(
+                  onChanged: (code) {
+                    countryCode = code;
+                    getProviders(currentOption, countryCode,
+                        movie: widget.movie, show: widget.show);
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        maximumSize: Size(screenWidth - 20, 50),
+                        minimumSize: Size(screenWidth - 20, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        ),
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
+                        side: BorderSide(
+                            width: 1.0, color: Theme.of(context).primaryColor)),
+                    child: Text(
+                      itemInMyList ? "Remove from List" : "Add to List",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    onPressed: () {
+                      if (itemInMyList) {
+                        _deleteItem(id);
+                      } else {
+                        widget.movie != null
+                            ? _addItem(movie: widget.movie)
+                            : _addItem(show: widget.show);
+                      }
                     },
-                  )),
+                  ),
+                ),
+              ),
               displayList(currentOption),
               DescriptionCard(
                   description: widget.movie?.overview ??
                       widget.show?.overview ??
                       'No overview available'),
-
               displayCast(cast),
-              // DescriptionCard(
-              //   description: "Your description here",
-              //   padding: EdgeInsets.all(16.0),
-              //   textStyle: TextStyle(fontSize: 16, color: Colors.blue),
-              // )
-
-              // Get the cast
             ],
           ),
         ),
@@ -424,8 +442,6 @@ class _NewDetailedState extends State<NewDetailed> {
             autoPlayAnimationDuration: const Duration(milliseconds: 1500),
             autoPlayInterval: const Duration(seconds: 4),
             autoPlayCurve: Curves.ease,
-            //autoPlayCurve: Curves.easeInToLinear,
-            //autoPlayCurve: Curves.linearToEaseOut,
             aspectRatio: movieImages[0].aspectRatio,
             viewportFraction: 0.9),
         itemCount: movieImages.length,
@@ -442,10 +458,9 @@ class _NewDetailedState extends State<NewDetailed> {
             child: CachedNetworkImage(
               placeholder: (context, url) => Container(
                 margin: const EdgeInsets.symmetric(vertical: 20.0),
-                //width: width - 10,
                 height: 2000,
                 decoration: const BoxDecoration(
-                  color: Colors.transparent, // Placeholder color
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.all(Radius.circular(28.0)),
                 ),
               ),
