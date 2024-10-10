@@ -322,13 +322,7 @@ class _NewDetailedState extends State<NewDetailed> {
           actions: [
             IconButton(
               onPressed: () {
-                if (itemInMyList) {
-                  _deleteItem(id);
-                } else {
-                  widget.movie != null
-                      ? _addItem(movie: widget.movie)
-                      : _addItem(show: widget.show);
-                }
+                Navigator.of(context).popUntil((route) => route.isFirst);
               },
               icon: Icon(CupertinoIcons.home,
                   size: 32, color: Theme.of(context).primaryColor),
