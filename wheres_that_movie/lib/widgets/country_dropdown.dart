@@ -7,7 +7,6 @@
 //    from tmdb, adds them to the dropdown and updates the database
 //    with the choice the user made.
 //
-// Modification Log:
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -83,37 +82,34 @@ class _CountryDropdownState extends State<CountryDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     return DropdownSearch<String>(
       popupProps: PopupProps.menu(
         showSelectedItems: true,
         showSearchBox: true,
         searchDelay: const Duration(milliseconds: 100),
         menuProps: MenuProps(
-            borderRadius: BorderRadius.circular(10.0),
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer),
-        constraints: const BoxConstraints(maxHeight: 400),
-        itemBuilder: (context, item, isSelected) {
+          borderRadius: BorderRadius.circular(10.0),
+          backgroundColor:
+              Theme.of(context).scaffoldBackgroundColor.withOpacity(0.95),
+        ),
+        constraints: BoxConstraints(maxHeight: screenHeight / 3),
+        itemBuilder:
+            (BuildContext context, String item, bool isSelected, bool test) {
           return Container(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Text(
               item,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           );
         },
         searchFieldProps: TextFieldProps(
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-          ),
+          style: Theme.of(context).textTheme.bodyMedium,
           decoration: InputDecoration(
-            hintText: 'Search...',
-            hintStyle: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
+              hintText: 'Search...',
+              hintStyle: Theme.of(context).textTheme.bodyMedium),
         ),
         emptyBuilder: (context, searchEntry) {
           return Center(
@@ -124,14 +120,9 @@ class _CountryDropdownState extends State<CountryDropdown> {
           );
         },
       ),
-      items: countryNames,
-      dropdownButtonProps: DropdownButtonProps(
-        color: Theme.of(context).cardColor,
-      ),
-      //dropdownButtonProps: DropDownDecoratorProps,
-      dropdownDecoratorProps: DropDownDecoratorProps(
-          //baseStyle: Theme.of(context).textTheme.titleSmall,
-          dropdownSearchDecoration: InputDecoration(
+      items: (filter, infiniteScrollProps) => countryNames,
+      decoratorProps: DropDownDecoratorProps(
+          decoration: InputDecoration(
         border: OutlineInputBorder(
           borderSide: BorderSide(
             color: Theme.of(context).primaryColor,
@@ -142,7 +133,6 @@ class _CountryDropdownState extends State<CountryDropdown> {
           borderSide: BorderSide(color: Theme.of(context).primaryColor),
           borderRadius: BorderRadius.circular(18.0),
         ),
-        //labelStyle: Theme.of(context).textTheme.labelSmall,
         labelText: "Select Country",
       )),
       selectedItem: selectedCountry,
