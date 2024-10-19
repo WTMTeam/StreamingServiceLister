@@ -91,8 +91,6 @@ class _OptionsDialogState extends State<OptionsDialog> {
     // double screenHeight = MediaQuery.of(context).size.height;
     TextEditingController searchController = TextEditingController();
     List<Provider> filteredProviderList = [];
-    // ignore: unused_local_variable
-    String searchQuery = '';
     bool selectAll = false;
 
     Future<void> filterProviders(String query) async {
@@ -118,7 +116,7 @@ class _OptionsDialogState extends State<OptionsDialog> {
     }
 
     return AlertDialog(
-      backgroundColor: Theme.of(context).cardColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       insetPadding: const EdgeInsets.all(0.0),
       contentPadding: const EdgeInsets.all(0.0),
@@ -193,7 +191,7 @@ class _OptionsDialogState extends State<OptionsDialog> {
                     padding: EdgeInsets.all(8.0),
                     child: Divider(
                       thickness: 5.0,
-                      // color: Colors.red,
+                      color: Colors.transparent,
                     ),
                   ),
 
@@ -209,7 +207,6 @@ class _OptionsDialogState extends State<OptionsDialog> {
                               controller: searchController,
                               onChanged: (value) {
                                 setState(() {
-                                  // searchQuery = value;
                                   filterProviders(value);
                                 });
                               },
@@ -259,7 +256,11 @@ class _OptionsDialogState extends State<OptionsDialog> {
                                         width: 2.0,
                                         color: Theme.of(context).primaryColor),
                                   ),
-                                  child: const Text("Unselect All"),
+                                  child: Text(
+                                    "Unselect All",
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
                                 ),
                                 ElevatedButton(
                                   onPressed: () async {
@@ -283,7 +284,11 @@ class _OptionsDialogState extends State<OptionsDialog> {
                                         width: 2.0,
                                         color: Theme.of(context).primaryColor),
                                   ),
-                                  child: const Text("Select All"),
+                                  child: Text(
+                                    "Select All",
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
                                 ),
                               ],
                             ),
@@ -298,27 +303,38 @@ class _OptionsDialogState extends State<OptionsDialog> {
                                         Provider provider =
                                             filteredProviderList[index];
                                         String imgUrl =
-                                            "https://image.tmdb.org/t/p/w45${provider.logoPath}";
+                                            "https://image.tmdb.org/t/p/original${provider.logoPath}";
 
                                         bool isSelected = selectedProviders.any(
                                             (p) =>
                                                 p.providerID ==
                                                 provider.providerID);
                                         return ListTile(
-                                          leading: CachedNetworkImage(
-                                            imageUrl: imgUrl,
-                                            width: 50.0,
-                                            errorWidget: (context, imgUrl,
-                                                    error) =>
-                                                const Icon(
-                                                    Icons
-                                                        .no_photography_outlined,
-                                                    size: 50),
+                                          leading: Container(
+                                            width: 45.0,
+                                            clipBehavior: Clip.antiAlias,
+                                            decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(8.0)),
+                                              shape: BoxShape.rectangle,
+                                            ),
+                                            child: CachedNetworkImage(
+                                              imageUrl: imgUrl,
+                                              width: 50.0,
+                                              errorWidget: (context, imgUrl,
+                                                      error) =>
+                                                  const Icon(
+                                                      Icons
+                                                          .no_photography_outlined,
+                                                      size: 50),
+                                            ),
                                           ),
-                                          title: Text(provider.providerName),
-                                          subtitle: Text(provider
-                                              .displayPriority
-                                              .toString()),
+                                          title: Text(
+                                            provider.providerName,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          ),
                                           trailing: Checkbox(
                                               value: isSelected,
                                               onChanged: (value) {
@@ -388,24 +404,40 @@ class _OptionsDialogState extends State<OptionsDialog> {
                                                   combinedList[index];
 
                                               String imgUrl =
-                                                  "https://image.tmdb.org/t/p/w45${provider.logoPath}";
+                                                  "https://image.tmdb.org/t/p/original${provider.logoPath}";
                                               bool isSelected =
                                                   selectedProviders.any((p) =>
                                                       p.providerID ==
                                                       provider.providerID);
                                               return ListTile(
-                                                leading: CachedNetworkImage(
-                                                  imageUrl: imgUrl,
-                                                  width: 50.0,
-                                                  errorWidget: (context, imgUrl,
-                                                          error) =>
-                                                      const Icon(
-                                                          Icons
-                                                              .no_photography_outlined,
-                                                          size: 50),
+                                                leading: Container(
+                                                  width: 45.0,
+                                                  clipBehavior: Clip.antiAlias,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                8.0)),
+                                                    shape: BoxShape.rectangle,
+                                                  ),
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: imgUrl,
+                                                    width: 50.0,
+                                                    errorWidget: (context,
+                                                            imgUrl, error) =>
+                                                        const Icon(
+                                                            Icons
+                                                                .no_photography_outlined,
+                                                            size: 50),
+                                                  ),
                                                 ),
-                                                title:
-                                                    Text(provider.providerName),
+                                                title: Text(
+                                                  provider.providerName,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge,
+                                                ),
                                                 trailing: Checkbox(
                                                     value: isSelected,
                                                     onChanged: (value) {
@@ -473,7 +505,11 @@ class _OptionsDialogState extends State<OptionsDialog> {
                                         width: 2.0,
                                         color: Theme.of(context).primaryColor),
                                   ),
-                                  child: const Text("Unselect All"),
+                                  child: Text(
+                                    "Unselect All",
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
                                 ),
                                 ElevatedButton(
                                   onPressed: () async {
@@ -494,7 +530,11 @@ class _OptionsDialogState extends State<OptionsDialog> {
                                         width: 2.0,
                                         color: Theme.of(context).primaryColor),
                                   ),
-                                  child: const Text("Select All"),
+                                  child: Text(
+                                    "Select All",
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
                                 ),
                               ],
                             ),
@@ -538,7 +578,12 @@ class _OptionsDialogState extends State<OptionsDialog> {
                                         bool isSelected = selectedGenres.any(
                                             (g) => g.genreID == genre.genreID);
                                         return ListTile(
-                                          title: Text(genre.genreName),
+                                          title: Text(
+                                            genre.genreName,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          ),
                                           trailing: Checkbox(
                                               value: isSelected,
                                               onChanged: (value) {

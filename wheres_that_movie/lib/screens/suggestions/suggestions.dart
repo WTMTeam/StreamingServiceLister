@@ -25,7 +25,6 @@ import 'package:flutter/material.dart';
 import 'package:wheres_that_movie/api/models/movie_model.dart';
 import 'package:wheres_that_movie/api/models/genre_model.dart';
 import 'package:wheres_that_movie/api/models/provider_model.dart';
-import 'package:wheres_that_movie/screens/detailed_page/detailed.dart';
 import 'package:wheres_that_movie/screens/detailed_page/new_detailed.dart';
 import 'package:wheres_that_movie/screens/suggestions/options_dialog.dart';
 import 'package:wheres_that_movie/widgets/country_dropdown.dart';
@@ -363,7 +362,10 @@ class _SuggestionsState extends State<Suggestions> {
                                     side: BorderSide(
                                         width: 2.0,
                                         color: Theme.of(context).primaryColor)),
-                                child: Text(provider.providerName),
+                                child: Text(
+                                  provider.providerName,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
                               ),
                             )
                             .toList(),
@@ -382,7 +384,10 @@ class _SuggestionsState extends State<Suggestions> {
                           side: BorderSide(
                               width: 2.0,
                               color: Theme.of(context).primaryColor)),
-                      child: const Text("All Providers"),
+                      child: Text(
+                        "All Providers",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                     ),
                 if (currentGenres != null)
                   if (!genreSelectAll)
@@ -404,7 +409,10 @@ class _SuggestionsState extends State<Suggestions> {
                                     side: BorderSide(
                                         width: 2.0,
                                         color: Theme.of(context).primaryColor)),
-                                child: Text(genre.genreName),
+                                child: Text(
+                                  genre.genreName,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
                               ),
                             )
                             .toList(),
@@ -423,7 +431,10 @@ class _SuggestionsState extends State<Suggestions> {
                           side: BorderSide(
                               width: 2.0,
                               color: Theme.of(context).primaryColor)),
-                      child: const Text("All Genres"),
+                      child: Text(
+                        "All Genres",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                     ),
                 ElevatedButton(
                   child: Text(
