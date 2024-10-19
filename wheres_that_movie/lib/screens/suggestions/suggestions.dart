@@ -193,7 +193,7 @@ class _SuggestionsState extends State<Suggestions> {
                 ),
                 Container(
                   margin: const EdgeInsets.only(
-                      top: 5.0, bottom: 5.0, left: 10.0, right: 10.0),
+                      top: 5.0, bottom: 10.0, left: 10.0, right: 10.0),
                   alignment: Alignment.bottomLeft,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(18.0),
@@ -203,12 +203,11 @@ class _SuggestionsState extends State<Suggestions> {
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 15.0),
                     child: DropdownButton(
-                      iconEnabledColor: Theme.of(context).cardColor,
+                      iconEnabledColor: Theme.of(context).hintColor,
                       isExpanded: true,
                       underline: Container(),
                       borderRadius: BorderRadius.circular(10.0),
-                      dropdownColor:
-                          Theme.of(context).colorScheme.primaryContainer,
+                      dropdownColor: Theme.of(context).scaffoldBackgroundColor,
                       value: currentOption,
                       items: options
                           .map<DropdownMenuItem<String>>(
