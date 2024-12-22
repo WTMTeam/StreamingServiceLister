@@ -12,6 +12,7 @@
 //
 
 import 'dart:math';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,10 +30,6 @@ class MyTrending extends StatefulWidget {
 }
 
 class _MyTrendingState extends State<MyTrending> {
-  // final String apiKey = 'dbffa0d16fb8dc2873531156a5c5f41a';
-  // final String readAccessToken =
-  //     'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmZmYTBkMTZmYjhkYzI4NzM1MzExNTZhNWM1ZjQxYSIsInN1YiI6IjYzODYzNzE0MDM5OGFiMDBjODM5MTJkOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qQjwnSQLDfVNAuinpsM-ATK400-dnwuWUVirc7_AiQY';
-  //List trendingMovies = [];
   List<Movie> trendingMovies = [];
   List trendingTitles = [];
   List voteAverageMovie = [];
@@ -62,7 +59,6 @@ class _MyTrendingState extends State<MyTrending> {
 
   // Make the card list
   makeCardList() {
-    // reset the cards list
     List newCards = [];
     for (int i = 0; i < 10; i++) {
       try {
@@ -79,6 +75,18 @@ class _MyTrendingState extends State<MyTrending> {
     }
     // All the information should be loaded by now
     _isLoading = false;
+  }
+
+  double getViewportFraction(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    // Adjust these threshold values based on your preference
+    if (screenWidth > 400) {
+      return 0.8;
+    } else {
+      return 0.9;
+    }
   }
 
   @override
@@ -142,81 +150,24 @@ class _MyTrendingState extends State<MyTrending> {
           ));
     } else if (!isHorizontal) {
       return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: const Text(''),
-          backgroundColor: Theme.of(context).canvasColor,
-          toolbarHeight: 0,
-          elevation: 0.0,
-        ),
         body: SafeArea(
           bottom: false,
           child: Stack(children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 80.0),
-              child: SizedBox(
-                width: screenWidth,
-                height: screenHeight / 1.2,
-                // height: screenHeight - MediaQuery.of(context).padding.top,
-                child: CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: SizedBox(
-                        // padding: const EdgeInsets.only(top: 100.0),
-                        // margin: EdgeInsets.only(top: 50.0),
-                        width: screenWidth,
-                        height: screenHeight / 1.2,
-                        // height: screenHeight - MediaQuery.of(context).padding.top,
-
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ExpandablePageView.builder(
-                              scrollDirection: Axis.vertical,
-                              controller: carouselController,
-                              clipBehavior: Clip.none,
-                              itemCount: cards.length,
-                              itemBuilder: (_, index) {
-                                if (!carouselController
-                                    .position.haveDimensions) {
-                                  // Wait for the layout to stabilize before attempting to animate the PageController
-                                  WidgetsBinding.instance
-                                      .addPostFrameCallback((_) {
-                                    if (carouselController
-                                        .position.haveDimensions) {
-                                      // If the position has dimensions now, rebuild the widget tree to trigger the animation
-                                      setState(() {});
-                                    }
-                                  });
-                                  // return const SizedBox();
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                }
-                                return Visibility(
-                                  visible: cardsVisible,
-                                  child: AnimatedBuilder(
-                                    animation: carouselController,
-                                    builder: (_, __) => Transform.scale(
-                                      scale: max(
-                                        0.85,
-                                        (1 -
-                                            (carouselController.page! - index)
-                                                    .abs() /
-                                                2),
-                                      ),
-                                      child: cards[index],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+              padding: const EdgeInsets.only(top: 0.0),
+              child: CarouselSlider.builder(
+                options: CarouselOptions(
+                  height: screenHeight,
+                  viewportFraction: 0.7,
+                  scrollDirection: Axis.vertical,
                 ),
+                itemCount: cards.length,
+                itemBuilder: (context, index, realIndex) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 43.0),
+                    child: InkWell(child: cards[index]),
+                  );
+                },
               ),
             ),
             MyCustomAppBar(
@@ -268,53 +219,18 @@ class _MyTrendingState extends State<MyTrending> {
               });
             },
           ),
-          SizedBox(
-            height: screenHeight / 1.2,
-            width: screenWidth,
-            child: CustomScrollView(
-              slivers: [
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ExpandablePageView.builder(
-                        controller: carouselController2,
-                        // allows our shadow to be displayed outside of widget bounds
-                        clipBehavior: Clip.none,
-                        itemCount: cards.length,
-                        itemBuilder: (_, index) {
-                          if (!carouselController2.position.haveDimensions) {
-                            // Wait for the layout to stabilize before attempting to animate the PageController
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              if (carouselController2.position.haveDimensions) {
-                                // If the position has dimensions now, rebuild the widget tree to trigger the animation
-                                setState(() {});
-                              }
-                            });
-                            // return const SizedBox();
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return AnimatedBuilder(
-                            animation: carouselController2,
-                            builder: (_, __) => Transform.scale(
-                              scale: max(
-                                0.85,
-                                (1 -
-                                    (carouselController2.page! - index).abs() /
-                                        2),
-                              ),
-                              child: cards[index],
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                )
-              ],
+          Padding(
+            padding: EdgeInsets.only(top: screenHeight / 8),
+            child: CarouselSlider.builder(
+              options: CarouselOptions(
+                height: 450.0,
+                aspectRatio: 1.5,
+                viewportFraction: getViewportFraction(context),
+              ),
+              itemCount: cards.length,
+              itemBuilder: (context, index, realIndex) {
+                return InkWell(child: cards[index]);
+              },
             ),
           ),
         ]),
