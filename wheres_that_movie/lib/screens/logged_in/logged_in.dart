@@ -72,6 +72,7 @@ class _MyLoggedInState extends State<MyLoggedIn> {
   List showsAndMovies = [];
 
   bool loadingSearchResults = false;
+  bool hasSearched = false;
 
   mySearch({clear = false}) async {
     searchResults = [];
@@ -82,67 +83,56 @@ class _MyLoggedInState extends State<MyLoggedIn> {
     setState(() {
       cards = [];
       loadingSearchResults = !clear;
+      hasSearched = !clear;
     });
 
-    // ? Redundant?
-    if (myController.text.isEmpty) {
-      setState(() {
-        cards = [];
-      });
+    String query = myController.text;
+
+    final Map<String, String> headers = {
+      'accept': 'application/json',
+      'Authorization':
+          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmZmYTBkMTZmYjhkYzI4NzM1MzExNTZhNWM1ZjQxYSIsInN1YiI6IjYzODYzNzE0MDM5OGFiMDBjODM5MTJkOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qQjwnSQLDfVNAuinpsM-ATK400-dnwuWUVirc7_AiQY',
+    };
+    var response = await http.get(
+        Uri.parse(ApiEndPoint(searchText: query).searchMovieShowPerson),
+        headers: headers);
+
+    if (response.statusCode != 200) {
+      // set an error state
+      // early return
+      print("Error getting search results");
     }
-    // else if (myController.text == previousSearch) {
-    //   // Do nothing
-    // }
-    else {
-      String query = myController.text;
 
-      final Map<String, String> headers = {
-        'accept': 'application/json',
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmZmYTBkMTZmYjhkYzI4NzM1MzExNTZhNWM1ZjQxYSIsInN1YiI6IjYzODYzNzE0MDM5OGFiMDBjODM5MTJkOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qQjwnSQLDfVNAuinpsM-ATK400-dnwuWUVirc7_AiQY',
-      };
-      var response = await http.get(
-          Uri.parse(ApiEndPoint(searchText: query).searchMovieShowPerson),
-          headers: headers);
+    final data = jsonDecode(response.body);
+    Map result = data;
 
-      if (response.statusCode != 200) {
-        // set an error state
-        // early return
-        print("Error getting search results");
+    setState(() {
+      previousSearch = myController.text;
+      searchResults = result['results'];
+    });
+
+    for (int i = 0; i < searchResults.length; i++) {
+      if (searchResults[i]['media_type'] == "movie") {
+        Movie currentMovie = Movie.fromJson(searchResults[i]);
+        showsAndMovies.add(currentMovie);
+      } else if (searchResults[i]['media_type'] == "tv") {
+        Show currentShow = Show.fromJson(searchResults[i]);
+        showsAndMovies.add(currentShow);
+      } else if (searchResults[i]['media_type'] == "person") {
+        Person currentPerson = Person.fromJson(searchResults[i]);
+        people.add(searchResults[i]['name']);
+        showsAndMovies.add(currentPerson);
       }
-
-      final data = jsonDecode(response.body);
-      Map result = data;
-
-      setState(() {
-        previousSearch = myController.text;
-        searchResults = result['results'];
-      });
-
-      for (int i = 0; i < searchResults.length; i++) {
-        if (searchResults[i]['media_type'] == "movie") {
-          Movie currentMovie = Movie.fromJson(searchResults[i]);
-          showsAndMovies.add(currentMovie);
-        } else if (searchResults[i]['media_type'] == "tv") {
-          Show currentShow = Show.fromJson(searchResults[i]);
-          showsAndMovies.add(currentShow);
-        } else if (searchResults[i]['media_type'] == "person") {
-          Person currentPerson = Person.fromJson(searchResults[i]);
-          people.add(searchResults[i]['name']);
-          showsAndMovies.add(currentPerson);
-        }
-      }
-
-      setState(() {
-        cards = showsAndMovies;
-        loadingSearchResults = false;
-      });
     }
+
+    setState(() {
+      cards = showsAndMovies;
+      loadingSearchResults = false;
+    });
   }
 
   double getViewportFraction(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-
     // Adjust these threshold values based on your preference
     if (screenWidth > 400) {
       return 0.8;
@@ -306,7 +296,40 @@ class _MyLoggedInState extends State<MyLoggedIn> {
                       child: CircularProgressIndicator(),
                     )
                   : cards.isEmpty
-                      ? const SizedBox()
+                      ? hasSearched
+                          ? Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 8.0),
+                              child: Container(
+                                height: 450,
+                                width: 300,
+                                decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(16.0)),
+                                ),
+                                child: Column(
+                                  children: [
+                                    const Spacer(),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 8.0),
+                                      child: Icon(
+                                        CupertinoIcons.nosign,
+                                        color: Theme.of(context).primaryColor,
+                                        size: 70,
+                                      ),
+                                    ),
+                                    Text(
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displayLarge,
+                                        "No Results"),
+                                    const Spacer(),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : const SizedBox()
                       : Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8.0, vertical: 8.0),

@@ -60,8 +60,26 @@ class _SuggestionsState extends State<Suggestions> {
   bool lengthLessThan = false;
   bool providerSelectAll = false;
   bool genreSelectAll = false;
+  bool hasSearched = false;
+  bool showMovieList = false;
 
   Future<List<Movie>>? movieSuggestions;
+
+  void resetState() {
+    setState(() {
+      movieSuggestions = null;
+      currentProviders = [];
+      currentGenres = [];
+      currentMovieOrShow = "Movie";
+      currentOption = "Stream";
+      currentLength = null;
+      lengthLessThan = false;
+      providerSelectAll = false;
+      genreSelectAll = false;
+      hasSearched = false;
+      showMovieList = false;
+    });
+  }
 
   void setProviders(dynamic selectedProviders, {bool? selectAll}) {
     if (selectedProviders.isEmpty) {
@@ -169,6 +187,19 @@ class _SuggestionsState extends State<Suggestions> {
         surfaceTintColor: Colors.transparent,
         shadowColor: Theme.of(context).colorScheme.secondary,
         elevation: 10.0,
+        actions: [
+          hasSearched
+              ? IconButton(
+                  icon: Icon(
+                    CupertinoIcons.repeat,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  onPressed: () {
+                    resetState();
+                  },
+                )
+              : const SizedBox()
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -454,92 +485,114 @@ class _SuggestionsState extends State<Suggestions> {
                           region: countryCode,
                           runtime: currentLength,
                         );
+                        hasSearched = true;
+                        showMovieList = true;
                       });
                     } catch (error) {
                       // Handle errors if any
                     }
                   },
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
-                  child: FutureBuilder<List<Movie>>(
-                    future: movieSuggestions,
-                    builder: (context, AsyncSnapshot snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return const Text("Something Went Wrong ");
-                        //return Text("Error: ${snapshot.error}");
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text(""));
-                      } else {
-// After loading your content, scroll to a specific position
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          double maxScrollOffset =
-                              _scrollController.position.maxScrollExtent;
-
-                          // Calculate the scrolling position as a percentage of the screen height
-                          _scrollController.animateTo(
-                            maxScrollOffset,
-                            // Specify the position where you want to scroll
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.easeInOut,
-                          );
-                        });
-                        return CarouselSlider.builder(
-                          options: CarouselOptions(
-                              height: 450.0,
-                              aspectRatio: 1.5,
-                              viewportFraction: getViewportFraction(context)),
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (context, index, realIndex) {
-                            Movie movie = snapshot.data[index];
-                            String posterUrl =
-                                "https://image.tmdb.org/t/p/w300${movie.posterPath}";
-                            return InkWell(
-                              onTap: () {
-                                Get.to(() => NewDetailed(movie: movie),
-                                    transition: Transition.zoom);
-                                // if (isMovie == "true") {
-                                //   Get.to(() => NewDetailed(movie: movie),
-                                //       transition: Transition.zoom);
-                                // } else if (isMovie == "false") {
-                                //   Get.to(() => NewDetailed(show: show),
-                                //       transition: Transition.zoom);
-                                // }
-
-                                // () => DetailedPage(
-                                //     id: movie.movieID, isMovie: true),
-                                // transition: Transition.zoom);
-                                //
-                              },
-                              child: Container(
-                                height: 450,
-                                width: 300,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: const BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8.0)),
-                                  shape: BoxShape.rectangle,
-                                ),
-                                child: CachedNetworkImage(
-                                  imageUrl: posterUrl,
-                                  width: 500,
-                                  errorWidget: (context, posterUrl, error) =>
-                                      const Icon(
-                                    Icons.no_photography_outlined,
-                                    size: 50,
+                !showMovieList
+                    ? const SizedBox()
+                    : Padding(
+                        padding: const EdgeInsets.only(
+                            top: 16.0, left: 8.0, right: 8.0),
+                        child: FutureBuilder<List<Movie>>(
+                          future: movieSuggestions,
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return const Text("Something Went Wrong ");
+                              //return Text("Error: ${snapshot.error}");
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              if (hasSearched) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 8.0),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 8.0),
+                                        child: Icon(
+                                          CupertinoIcons.nosign,
+                                          color: Theme.of(context).primaryColor,
+                                          size: 70,
+                                        ),
+                                      ),
+                                      Text(
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .displayLarge,
+                                          "No Results"),
+                                    ],
                                   ),
-                                ),
-                              ),
-                            );
+                                );
+                              } else {
+                                return const Center(child: Text(""));
+                              }
+                            } else {
+// After loading your content, scroll to a specific position
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                double maxScrollOffset =
+                                    _scrollController.position.maxScrollExtent;
+
+                                // Calculate the scrolling position as a percentage of the screen height
+                                _scrollController.animateTo(
+                                  maxScrollOffset,
+                                  // Specify the position where you want to scroll
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.easeInOut,
+                                );
+                              });
+                              return CarouselSlider.builder(
+                                options: CarouselOptions(
+                                    height: 450.0,
+                                    aspectRatio: 1.5,
+                                    viewportFraction:
+                                        getViewportFraction(context)),
+                                itemCount: snapshot.data.length,
+                                itemBuilder: (context, index, realIndex) {
+                                  Movie movie = snapshot.data[index];
+                                  String posterUrl =
+                                      "https://image.tmdb.org/t/p/w300${movie.posterPath}";
+                                  return InkWell(
+                                    onTap: () {
+                                      Get.to(() => NewDetailed(movie: movie),
+                                          transition: Transition.zoom);
+                                    },
+                                    child: Container(
+                                      height: 450,
+                                      width: 300,
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8.0)),
+                                        shape: BoxShape.rectangle,
+                                      ),
+                                      child: CachedNetworkImage(
+                                        imageUrl: posterUrl,
+                                        width: 500,
+                                        errorWidget:
+                                            (context, posterUrl, error) =>
+                                                const Icon(
+                                          Icons.no_photography_outlined,
+                                          size: 50,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            }
                           },
-                        );
-                      }
-                    },
-                  ),
-                ),
+                        ),
+                      ),
               ],
             ),
           ),
